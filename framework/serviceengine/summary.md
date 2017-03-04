@@ -195,9 +195,13 @@ action  标签
 
 group  标签
 
-<table border><tr><td width=990>属性名</td><td width=748>需要?</td><td width=6842>描述</td><tr><td width=990>name</td><td width=748>Y</td><td width=6842>要调用的服务组的名字。</td><tr><td width=990>send-mode</td><td width=748>N</td><td width=6842>这些服务被调用的方式。可为：none, all, first-available, random, 或 round-robin。默认为all。</td></table>service  标签
+<table border><tr><td width=990>属性名</td><td width=748>需要?</td><td width=6842>描述</td><tr><td width=990>name</td><td width=748>Y</td><td width=6842>要调用的服务组的名字。</td><tr><td width=990>send-mode</td><td width=748>N</td><td width=6842>这些服务被调用的方式。可为：none, all, first-available, random, 或 round-robin。默认为all。</td></table>
 
-<table border><tr><td width=1446>属性名</td><td width=747>需要?</td><td width=6387>描述</td><tr><td width=1446>service</td><td width=747>N</td><td width=6387>这个服务组要调用的服务名。</td><tr><td width=1446>mode</td><td width=747>Y</td><td width=6387>这个服务被调用的方式。可为sync 或 async。async 将不会更新 context 即使 result-to-context 设置为 true。</td><tr><td width=1446>result-to-context</td><td width=747>N</td><td width=6387>组服务执行的结果是否更新服务的上下文(context)，默认为 false.。</td></table>###4、路由服务(Route  services) 
+service  标签
+
+<table border><tr><td width=1446>属性名</td><td width=747>需要?</td><td width=6387>描述</td><tr><td width=1446>service</td><td width=747>N</td><td width=6387>这个服务组要调用的服务名。</td><tr><td width=1446>mode</td><td width=747>Y</td><td width=6387>这个服务被调用的方式。可为sync 或 async。async 将不会更新 context 即使 result-to-context 设置为 true。</td><tr><td width=1446>result-to-context</td><td width=747>N</td><td width=6387>组服务执行的结果是否更新服务的上下文(context)，默认为 false.。</td></table>
+
+### 路由服务(Route  services) 
 
 路由服务使用路由服务引擎定义。当一个路由服务被调用时，不会执行调用，但是所有定义的  ECA  会在适当事件中运行。这种类型的服务不常用，但是通过利用ECA服务选项可以路由(  'route')  到其他服务。
 
@@ -255,6 +259,7 @@ service-groups  标签用来定义服务组定义文件的位置。有如下属
 service-ecas  标签用来定义服务条件触发动作定义文件的位置。有如下属性： 
 
 <table border><tr><td width=716>属性名</td><td width=510>需要?</td><td width=3753>描述</td><tr><td width=716>loader</td><td width=510>Y</td><td width=3753>前面 resource-loader 标签定义的资源加载器。</td><tr><td width=716>location</td><td width=510>Y</td><td width=3753>指明资源加载器加载资源要使用的文件的位置。</td></table>
+
 ###  JMS
 
 jms-service  标签为JMS定义服务的位置。 
@@ -264,4 +269,5 @@ jms-service  标签为JMS定义服务的位置。 
 jms-service  可以包含一个或多个  server  标签，  server  标签有如下属性：
 
 <table border><tr><td width=1486>属性名</td><td width=510>需要?</td><td width=3953>描述</td><tr><td width=1486>jndi-server-name</td><td width=510>Y</td><td width=3953>在 jndiservers.xml 文件中定义的 JNDI 服务名字。</td><tr><td width=1486>jndi-name</td><td width=510>Y</td><td width=3953>在 JNDI 中为 JMS 工厂定义的名字。</td><tr><td width=1486>topic-queue</td><td width=510>Y</td><td width=3953>主题或队列( topic or queue)的名字。</td><tr><td width=1486>type</td><td width=510>Y</td><td width=3953>JMS 类型可能为主题或队列( topic or queue)。</td><tr><td width=1486>username</td><td width=510>Y</td><td width=3953>连接主题/队列(topic/queue)的用户名。</td><tr><td width=1486>password</td><td width=510>Y</td><td width=3953>连接主题/队列(topic/queue)的密码。</td><tr><td width=1486>listen</td><td width=510>Y</td><td width=3953>设置是否对主题/队列(topic/queue)起用监听。</td></table>
+
 在  jndiservers.xml  文件中定义的  jndi-server  应该指出JMS  客户端  APIs  的位置。根据定义的  JMS  类型来决定使用  TopicConnectionFactory  或  QueueConnectionFactory  。JNDI  名字应该指出在  JNDI  中包含连接工厂实例的对象名字。
