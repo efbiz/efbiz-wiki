@@ -1,273 +1,605 @@
-## 服务引擎指南
+## 服务定义
 
-### 简介 
+### 服务定义文件
 
-服务框架是OFBiz  2.0  新增加的功能。服务定义为一段独立的逻辑程序，当多个服务组合在一起时可完成不同类型的业务需求。服务有很多类型：Workflow,  Rules,  Java,  SOAP,  BeanShell  等。Java  类型的服务更像一个静态方法实现的事件，然而使用服务框架就不会局限在Web应用程序中。服务需要使用Map传入参数，结果同样从Map中返回。这样很妙，因为Map可以被序列化并保存或者通过HTTP(SOAP)传输。服务通过HYPERLINK  "../../../Documents  and  Settings/ljc/×ÀÃæ/services.html"  \l  "ServiceDefinition"服务定义来定义并指派给具体的HYPERLINK  "../../../Documents  and  Settings/ljc/×ÀÃæ/services.html"  \l  "ServiceEngine"服务引擎。每个HYPERLINK  "../../../Documents  and  Settings/ljc/×ÀÃæ/services.html"  \l  "ServiceEngine"服务引擎  通过适当的方式负责调用服务定义。因为服务没有和  web应用程序绑定在一起，就允许在没有响应对象可用时仍可以执行。这就允许在指定时间由HYPERLINK  "../../../Documents  and  Settings/ljc/×ÀÃæ/services.html"  \l  "JobScheduler"工作调度程序在后台调用服务。
+ofbiz-component.xml：所有的服务定义文件在每个组件的ofbi-component.xml文件中
 
-服务能调用其他服务。因此，将多个小的服务串联起来实现一个大的任务使重用更容易。在不同应用程序中使用的服务可以通过创建全局服务定义文件(只能创建一个)或者一个应用程序的特定服务(这样的服务受限制且只能用于这个应用程序)。
-当在web应用程序中使用时，服务可以用于web事件，这允许时间在服务框架中(stay  small?)并重用现成的逻辑。同样，服务可以定义成  'exportable'，允许外部程序访问。目前，SOAP  EventHandler允许服务通过  SOAP  来产生。其他形式的远程访问将来会加入到框架中。
+例:framework/common/ofbiz-component.xml
 
-### Service  Dispatcher 
+<code>
+ &lt;entity-resource  type="model"  reader-name="main"  loader="main"  location="entitydef/entitymodel.xml"/&gt; 
+ &lt;entity-resource  type="model"  reader-name="main"  loader="main"  location="entitydef/entitymodel_olap.xml"/&gt;   
+&lt;entity-resource  type="group"  reader-name="main"  loader="main"  location="entitydef/entitygroup_olap.xml"/&gt;   
+ &lt;entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CommonSecurityData.xml"/&gt;   
+ &lt;entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CommonSystemPropertyData.xml"/&gt;   
+ &lt;entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CommonTypeData.xml"/&gt;   
+ &lt;entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CountryCodeData.xml"/&gt;   
+ &lt;entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CurrencyData.xml"/&gt;   
+</code>
 
-Service  Dispatcher将需要处理的服务分配给适当的HYPERLINK  "../../../Documents  and  Settings/Àî¼ª³É/×ÀÃæ/services.html"  \l  "ServiceEngine"服务引擎，在那里服务被调用。每个Entity  Delegator  都有一个具体的  ServiceDispatcher  。应用程序中如果有多个delegator  也应该有多个ServiceDispatcher  。通过LocalDispatcher  访问  ServiceDispatcher  。可能有多个LocalDispatcher关联到一个ServiceDispatcher上。每个LocalDispatcher  都是唯一命名的并包含自己的一些服务定义。当创建  LocalDispatcher  的一个实例，一个  HYPERLINK  "../../../Documents  and  Settings/Àî¼ª³É/×ÀÃæ/services.html"  \l  "DispatchContext"DispatchContext  实例也会被创建并被传给服务引擎。
+服务参数
 
-一个  LocalDispatcher  和一个应用程序关联。应用程序永远不会直接和ServiceDispatcher对话。LocalDispatcher  包含一个API用来调用服务，这些服务通过ServiceDispather发送。然而，应用程序可能运行于不同的线程和实际的  ServiceDispatcher  中。
+**IN：输入参数**
+类似于java方法中的入参一样，一个ofibiz服务同样需要声明入参，声明方式为在attribute中添加属性mode="IN"
 
-### Dispatch  Context 
+例：
+<code>
+&lt;attribute  name="partyId"  type="String"  mode="IN"  optional="true"/&gt;   
+</code>
 
-DispatchContext  在LocalDispatcher实例之上由他创建的。这是运行时dispatcher  上下文环境。它包含每个dispatcher处理服务的必须信息。这个上下文包含到每个服务定义文件的引用。
+**OUT：输出参数**
 
-### 服务引擎 
+类似于java方法中会有返回值一样，一个ofbiz服务也需要声明输出参数，声明方式为在attribute中添加属性mode="OUT"
 
-是服务实际被调用的地方。每个服务定义都要定义一个引擎名。引擎名定义在  servicesengine.xml  文件中当调用时通过GenericEngineFactory  实现。支持第三方引擎，但是必须实现  GenericEngine  接口。参照实体引擎配置指南看定义引擎的详细信息。调用同步和异步服务是引擎的工作。使用  HYPERLINK  "../../../Documents  and  Settings/Àî¼ª³É/×ÀÃæ/services.html"  \l  "JobScheduler"Job  Scheduler调用异步服务的引擎可以从GenericAsyncEngine派生得到。
+例：
+<code>
+&lt;attribute  name="noteId"  type="String"  mode="OUT"/&gt;   
+</code>
 
-### 服务定义
+**INOUT：输入输出参数**
 
-服务定义在服务定义文件中。有全局(global  )定义文件，所有服务派遣者都可以调用，同时也有只和单一服务派遣者相关联单独服务定义文件。当LocalDispatcher  被创建，他会传递指向服务定义文件的  Arils  的一个集合。这些文件由XML写成，并定义了调用一个服务的必须信息。请参照相关  HYPERLINK  "E:\\dtds\\services.dtd"DTD  文件。
+为了方便起见，可以将一个参数既作为输入参数，又作为输出参数，声明方式为在attribute中添加属性mode="INOUT"
 
-服务定义有一个唯一名字，明确的服务引擎名，明确定义的输入输出参数。下面是个例子。
+例：
+<code>
+&lt;attribute  name="nodeId"  type="String"  mode="INOUT"/&gt;   
+</code>
 
-&lt;service  name="userLogin"  engine="java"
-        	location="org.ofbiz.commonapp.security.login.LoginServices"  invoke="userLogin"&gt;
-        &lt;description&gt;Authenticate  a  username/password;  create  a  UserLogin  object&lt;/description&gt;
-        &lt;attribute  name="login.username"  type="String"  mode="IN"/&gt;
-        &lt;attribute  name="login.password"  type="String"  mode="IN"/&gt;
-        &lt;attribute  name="userLogin"  type="org.ofbiz.core.entity.GenericValue"  mode="OUT"  optional="true"/&gt;
-&lt;/service&gt;
+**隐含参数 **
 
-SERVICE  元素:
+如同servlet内置对象，在ofbiz服务中有少数参数已经在框架中定义了，无需声明就可以在服务中使用
 
-name  -  服务的唯一名字。 
+<table border><tr><td width=2871>name</td><td width=4580>type</td><td width=854>mode</td><td width=1320>optional</td><td width=4580>说明</td><tr><td width=2871>responseMessage</td><td width=4580>String</td><td width=854>OUT</td><td width=1320>true</td><td width=4580>返回信息（success/error/fail)</td><tr><td width=2871>errorMessage</td><td width=4580>String</td><td width=854>OUT</td><td width=1320>true</td><td width=4580>错误信息</td><tr><td width=2871>errorMessageList</td><td width=4580>java.util.List</td><td width=854>OUT</td><td width=1320>true</td><td width=4580>错误信息列表</td><tr><td width=2871>successMessage</td><td width=4580>String</td><td width=854>OUT</td><td width=1320>true</td><td width=4580>成功信息</td><tr><td width=2871>successMessageList</td><td width=4580>java.util.List</td><td width=854>OUT</td><td width=1320>true</td><td width=4580>成功信息列表</td><tr><td width=2871>userLogin</td><td width=4580>org.ofbiz.entity.GenericValue</td><td width=854>INOUT</td><td width=1320>true</td><tr><tr><td width=2871>locale</td><td width=4580>java.util.Locale</td><td width=854>INOUT</td><td width=1320>true</td><td width=4580>国际化本地对象</td></table> 
 
-engine  -  服务引擎的名字  (在  servicesengine.xml  中定义) 
+**可选/必选参数**
 
-location  -  服务类的包或其位置。 
+服务的参数可以是可选，也可以是必须。必须输入的参数在服务调用之前会做检验，如果输入参数的名字及对象类型与声明不符，服务就不会被调用（报错）。必须的输出参数在服务调用之后会被检验，如果输出参数的名字及对象类型与声明不符，会导致服务失败（报错）。只有声明为必须的参数才被检验，同样如果你传入了一个没有意义的参数，也将导致服务调用失败。声明方式为在attribute中添加属性optional="true"/optional="false"（缺省）
 
-invoke  -  服务的方法名。 
 
-auth  -  服务是否需要验证(true/false) 
+例：
 
-export  -  是否通过  SOAP/HTTP/JMS  (true/false)  访问。
+<code>
+&lt;attribute  name="partyId"  type="String"  mode="IN"  optional="true"/&gt;   
+&lt;attribute  name="partyId"  type="String"  mode="IN"  optional="false"/&gt;   
+</code>
 
-validate  -  是否对下面属性的名字和类型进行验证(true/false) 
 
-IMPLEMENTS  元素:
+---
 
-sevice  -  这个服务实现的服务的名字。所有属性都被继承。 
+## Interface服务引擎
 
-ATTRIBUTE  元素:
+interface服务引擎实现了在定义服务时可以共享同样的参数。interface服务是不可以被调用的，它仅作为其他服务继承而定义。每个接口服务都需要用interface服务引擎来定义
 
-name  -  这个属性的名字 
+例：applications/order/servicedef/services.xml
 
-type  -  对象的类型  (String,  java.util.Date,  等。) 
+<code>
+&lt;service  name="massOrderChangeInterface"  engine="interface"  location=""  invoke=""&gt;   
+ &lt;description&gt;Interface  for  Mass  Order  Change  Services&lt;/description&gt;   
+ &lt;attribute  name="orderIdList"  type="List"  mode="IN"  optional="false"/&gt;   
+&lt;/service&gt;   
+</code>
 
-mode  -  这个参数是输入、输出或输入输出类型。(IN/OUT/INOUT) 
+继承上述的接口来实现新的服务
 
-optional  -  这个参数是否可选(true/false) 
+例：applications/order/servicedef/services.xml
 
-*下划线标注的值是默认值。
-
-由上面可以看出服务名是  userLogin，使用  java  引擎。这个服务需要两个必须的输入参数：login.username  和  login.password。必须的参数在服务调用之前会做检验。如果参数和名字及对象类型不符服务就不会被调用。参数是否应该传给服务定义为optional。服务调用后，输出参数也被检验。只有需要的参数被检验，但是，如果传递了一个没有定义为可选的参数或者必须的参数没有通过校验，将会导致服务失败。这个服务没有要求输出参数，因此只是简单返回。
-
-### 用法
-
-服务框架内部的用法非常简单。在  Web  应用程序中，LocalDispatcher  被保存在  ServletContext  中，ServletContext  可以在事件中通过访问  Session  对象来访问。对不是基于  web  的应用程序仅仅创建了一个  GenericDispatcher。(在web.xml中可以找到)
-
-GenericDelegator  delegator  =  GenericDelegator.getGenericDelegator("default");
-LocalDispatcher  dispatcher  =  new  GenericDispatcher("UniqueName",  delegator);
-
-现在我们有了dispatcher  ，可以用来调用服务。为了调用这个服务，为  context  创建一个  Map  包含一个输入参数  message,  然后调用这个服务：
-
-Map  context  =  UtilMisc.toMap("message","This  is  a  test.");
-Map  result  =  null;
-
-try  {
-
-    result  =  dispatcher.runSync("testScv",  context);
-}
-catch  (GenericServiceException  e)  {
-    e.printStackTrace();
-}
-if  (result  !=  null)
-    System.out.println("Result  from  service:  "  +  (String)  result.get("resp"));
-
-现在查看控制台看测试服务的回复信息。
-
-***  The  test  service  is  located  in  core/docs/examples/ServiceTest.java  you  must  compile  this  and  place  it  in  the  classpath.
-
-安排一个服务在稍晚点时间运行或者重复使用：
-
-//  This  example  will  schedule  a  job  to  run  now.
-Map  context  =  UtilMisc.toMap("message","This  is  a  test.");
-try  {
-    long  startTime  =  (new  Date()).getTime();
-    dispatcher.schedule("testScv",  context,  startTime);
-}
-catch  (GenericServiceException  e)  {
-    e.printStackTrace();
-}
+<code>
+&lt;service  name="massPickOrders"  engine="java"  transaction-timeout="300"   
+ location="org.ofbiz.order.order.OrderServices"  invoke="massPickOrders"  auth="true"&gt;   
+ &lt;implements  service="massOrderChangeInterface"/&gt;   
+ &lt;/service&gt;   
+ &lt;service  name="massChangeOrderApproved"  engine="java"  transaction-timeout="300"   
+ location="org.ofbiz.order.order.OrderServices"  invoke="massChangeApproved"  auth="true"&gt;   
+ &lt;implements  service="massOrderChangeInterface"/&gt;   
+ &lt;/service&gt;   
+ &lt;service  name="massProcessOrders"  engine="java"  transaction-timeout="300"   
+ location="org.ofbiz.order.order.OrderServices"  invoke="massProcessOrders"  auth="true"&gt;   
+ &lt;implements  service="massOrderChangeInterface"/&gt;   
+ &lt;/service&gt;   
+</code>
 
-//  This  example  will  schedule  a  service  to  run  now  and  repeat  once  every  5  seconds  a  total  of  10  times.
-Map  context  =  UtilMisc.toMap("message","This  is  a  test.");
-try  {
-    long  startTime  =  (new  Date()).getTime();
-    int  frequency  =  RecurrenceRule.SECONDLY;
-    int  interval  =  5;
-    int  count  =  10;
-    dispatcher.schedule("testScv",  context,  startTime,  frequency,  interval,  count);
-}
-catch  (GenericServiceException  e)  {
-    e.printStackTrace();
-}
+然后我们分别查看java类org.ofbiz.order.order.OrderServices中的方法massPickOrders、massChangeApproved、massProcessOrders
 
-## 高级特性
+代码片中都存在如下代码，可以获取参数接口定义的变量orderIdList
 
-服务引擎中加入了很多'高级'特性，在下面有例子、定义及信息。
+<code>
+  List&lt;String&gt;  orderIds  =  UtilGenerics.checkList(context.get("orderIdList"));   
+</code>
 
-### 接口
 
-interface  服务引擎实现了在定义服务时可以共享同样的参数。一个接口服务不能被调用，而是为其他服务继承而定义的。每个接口服务都需要用interface  引擎来定义：
+覆盖接口，覆盖接口中的属性或新增属性
 
-&lt;service  name="testInterface"  engine="interface"  location=""  invoke=""&gt;
-        &lt;description&gt;A  test  interface  service&lt;/description&gt;
-        &lt;attribute  name="partyId"  type="String"  mode="IN"/&gt;
-        &lt;attribute  name="partyTypeId"  type="String"  mode="IN"/&gt;
-        &lt;attribute  name="userLoginId"  type="org.ofbiz.core.entity.GenericValue"  mode="OUT"  optional="true"/&gt;
-&lt;/service&gt;
+例：applications/order/servicedef/services.xml
 
-**注意到location  和  invoke  和在DTD中定义为必须的，因此用做  interface  时使用空串。
+<code>
+&lt;service  name="massPrintOrders"  engine="java"  transaction-timeout="300"   
+location="org.ofbiz.order.order.OrderServices"  invoke="massPrintOrders"  auth="true"&gt;   
+&lt;implements  service="massOrderChangeInterface"/&gt;   
+ &lt;attribute  name="screenLocation"  type="String"  mode="IN"  optional="false"/&gt;   
+&lt;attribute  name="printerName"  type="String"  mode="IN"  optional="true"/&gt;   
+&lt;/service&gt; 
+</code>
+ 
 
-现在定义一个服务来实现这个接口
+查看代码java类org.ofbiz.order.order.OrderServices中的方法massPrintOrders
 
-&lt;service  name="testExample1"  engine="simple" 
-    	location="org/ofbiz/commonapp/common/SomeTestFile.xml" 
+<code>
+String  screenLocation  =  (String)  context.get("screenLocation");
+String  printerName  =  (String)  context.get("printerName");
+//  make  the  list  per  facility
+ List&lt;String&gt;  orderIds  =  UtilGenerics.checkList(context.get("orderIdList"));
+</code>
 
-invoke="testExample1"&gt;
-        &lt;description&gt;A  test  service  which  implements  testInterface&lt;/description&gt;
-        &lt;implements  service="testInterface"/&gt;     
+---
 
+
+## 实现服务
+
+实现一个服务可以用一个或多个服务引擎来实现，这里描述下常用的实现方法
+
+### java：用java代码实现服务
+
+首先定义java类型的服务
+
+服务定义：applications/party/servicedef/services_view.xml
+
+<code>
+ &lt;service  name="getPerson"  engine="java"
+ location="org.ofbiz.party.party.PartyServices"  invoke="getPerson"&gt;
+&lt;description&gt;Gets  a  person  entity  from  the  cache/database&lt;/description&gt;
+&lt;attribute  name="partyId"  type="String"  mode="IN"/&gt;
+ &lt;attribute  name="lookupPerson"  type="org.ofbiz.entity.GenericValue"  mode="OUT"/&gt;
 &lt;/service&gt;
+</code>
 
-testExample1  服务将会和  testInterface  服务拥有完全一样的需要或可选的属性。任何实现testInterface  的服务都将继承其参数/属性。如果需要给指定的服务增加附加属性，可以在  implements  标签后面跟上  attribute  标签。可以在  implements  标签后面重定义某个属性达到重写一个属性的目的。
 
-### ECAs
+** engine：  java **
 
-ECA  (Event  Condition  Action)  更象是一个触发器。当一个服务被调用时，会执查看是否为这个事件定义任何ECAs  。在验证之前，检验之前，事件在实际调用之前，在输出参数校验之前，在事务提交之前或者在服务返回之前包含进来。然后每个条件都会进行验证，如果全部返回为真，定义的动作就会执行。一个动作就是一个服务，该服务的参数必须已经存在于服务的上下文中。每个ECA可以定义的条件数或者动作数没有限制。
+location：指向带包路径的类名
 
-&lt;service-eca&gt;
+invoke：静态的方法名称
 
-        &lt;eca  service="testScv"  event="commit"&gt;
-                &lt;condition  field-name="message"  operator="equals"  value="12345"/&gt;
-                &lt;action  service="testBsh"  mode="sync"/&gt;
-        &lt;/eca&gt;
-&lt;/service-eca&gt;
+代码
 
-eca  标签：
+1、参数通过Map方式传递给java方法
 
-<table border><tr><td width=1102>属性名</td><td width=920>需要?</td><td width=6558>描述</td><tr><td width=1102>service</td><td width=920>Y</td><td width=6558>ECA关联的服务名</td><tr><td width=1102>event</td><td width=920>Y</td><td width=6558>ECA在哪个事件上或之前执行。事件有：auth, in-validate, out-validate, invoke, commit, 或者 return。</td><tr><td width=1102>run-on-error</td><td width=920>N</td><td width=6558>当有错误时是否执行ECA (默认为 false)</td></table>
+2、在java事件中GenericValue类型的userLogin、Locale类型的locale作为属性加入到request中
 
-eca  元素应该有0或多个condition/condition-field  元素，1或多个action元素。
+3、第一个参数DispatchContext包含访问数据库、调用其他服务的工具
 
-condition  标签
+4、从java代码中如下访问便利的对象
 
-<table border><tr><td width=963>属性名</td><td width=805>需要?</td><td width=6812>描述</td><tr><td width=963>map-name</td><td width=805>N</td><td width=6812>本服务上下文属性的名字，包含要检验的字段名字组成的Map。如果没有指定这个域名，就会使用服务上下文环境（env-name）。</td><tr><td width=963>field-name</td><td width=805>Y</td><td width=6812>要比较的map的名字。</td><tr><td width=963>operator</td><td width=805>Y</td><td width=6812>指定比较操作符，必须为 less, greater, less-equals, greater-equals, equals, not-equals, 或 contains 当中的一个。</td><tr><td width=963>value</td><td width=805>Y</td><td width=6812>字段要比较的值。必须为String,但是可以转换成其他类型。</td><tr><td width=963>type</td><td width=805>N</td><td width=6812>用来进行比较的数据类型。必须是 String, Double, Float, Long, Integer, Date, Time, 或 Timestamp 当中的一个。</td><tr><td width=963>format</td><td width=805>N</td><td width=6812>指定当将String 转换成其他类型(主要是Date, Time 和 Timestamp)时使用的格式说明。</td></table>
+<code>
+GenericValue  userLogin  =  (GenericValue)context.get("userLogin");
+Locale  locale  =  (Locale)context.get("locale");
+Delegator  delegator  =  dctx.getDelegator();
+</code>
 
-condition-field  标签
 
-<table border><tr><td width=1196>属性名</td><td width=714>需要?</td><td width=6670>描述</td><tr><td width=1196>map-name</td><td width=714>N</td><td width=6670>本服务上下文属性的名字，包含要检验的字段名字组成的Map。如果没有指定这个域名，就会使用服务上下文环境（env-name）。</td><tr><td width=1196>field-name</td><td width=714>Y</td><td width=6670>要比较的map的名字。</td><tr><td width=1196>operator</td><td width=714>Y</td><td width=6670>指定比较操作符，必须为 less, greater, less-equals, greater-equals, equals, not-equals, 或 contains 当中的一个。</td><tr><td width=1196>to-map-name</td><td width=714>N</td><td width=6670>本服务上下文属性的名字，包含要与之比较的字段名字组成的Map。如果为空就会使用上面的map-name，如果map-name也为空，就会使用服务下文环境（env-name）。</td><tr><td width=1196>to-field-name</td><td width=714>N</td><td width=6670>要与之比较的Map中要比较的字段名，如果为空默认为上面field-name。</td><tr><td width=1196>type</td><td width=714>N</td><td width=6670>用来进行比较的数据类型。必须是 String, Double, Float, Long, Integer, Date, Time, 或 Timestamp 当中的一个。如果没指定默认为String。</td><tr><td width=1196>format</td><td width=714>N</td><td width=6670>指定当将String 转换成其他类型(主要是Date, Time 和 Timestamp)时使用的格式说明。</td></table>
+** 安全和访问控制**
 
-action  标签
+例：详细参考/applications/order/src/org/ofbiz/order/order/OrderLookupServices.java
 
-<table border><tr><td width=1446>属性名</td><td width=576>需要?</td><td width=6558>描述</td><tr><td width=1446>service</td><td width=576>N</td><td width=6558>本动作(action)要调用的服务名。</td><tr><td width=1446>mode</td><td width=576>Y</td><td width=6558>调用服务的方式，可以是sync 或 async。async actions 将不会更新 context 即使 result-to-context 设置为 true.</td><tr><td width=1446>result-to-context</td><td width=576>N</td><td width=6558>action 服务的执行结果是否更新服务的上下文(context)，默认为 true。</td><tr><td width=1446>ignore-error</td><td width=576>N</td><td width=6558>是否忽略本action 服务导致的错误，如果否原始服务就会失败。默认为 true。</td><tr><td width=1446>persist</td><td width=576>N</td><td width=6558>action 服务store/run。可以为 true 或 false。 只有当 mode 属性为 async 时才生效。默认为false。</td></table>
+<code>
+public  static  Map&lt;String,  Object&gt;  findOrders(DispatchContext  dctx,  Map&lt;String,  ? extends  Object&gt;  context)  {
+Security  security  =  dctx.getSecurity();
+ //  check  security  flag  for  purchase  orders
+boolean  canViewPo  =  security.hasEntityPermission("ORDERMGR",  "_PURCHASE_VIEW",  userLogin);
+ if  (!canViewPo)  {
+   conditions.add(EntityCondition.makeCondition("orderTypeId",  EntityOperator.NOT_EQUAL,  "PURCHASE_ORDER"));
+ }
+}
+</code>
+
+
+** 服务返回 **
+
+服务必须返回一个map，这个map至少包含一个responseMessage
+
+ModelService.RESPOND_SUCCESS
+
+ModelService.RESPOND_ERROR
+
+ModelService.RESPOND_FAIL
+
+simple:使用minilang开发的服务详细使用方法参考后续的《minilang开发  学习笔记  》系列
+
+脚本：applications/party/servicedef/services.xml
+
+<code>
+ &lt;!--  Party  Relationship  services  --&gt;<br/>
+&lt;service  name="createPartyRelationship"  default-entity-name="PartyRelationship"  engine="simple"
+location="component://party/script/org/ofbiz/party/party/PartyServices.xml"  invoke="createPartyRelationship"  auth="true"&gt;<br/>
+ &lt;description&gt;
+ Create  a  Relationship  between  two  Parties;
+ if  partyIdFrom  is  not  specified  the  partyId  of  the  current  userLogin  will  be  used;
+ if  roleTypeIds  are  not  specified  they  will  default  to  "_NA_".
+ If  a  partyIdFrom  is  passed  in,  it  will  be  used  if  the  userLogin  has  PARTYMGR_REL_CREATE  permission.
+ &lt;/description&gt;<br/>
+ &lt;permission-service  service-name="partyRelationshipPermissionCheck"  main-action="CREATE"/&gt;<br/>
+ &lt;auto-attributes  include="pk"  mode="IN"  optional="true"/&gt;<br/>
+ &lt;auto-attributes  include="nonpk"  mode="IN"  optional="true"/&gt;
+ &lt;override  name="partyIdTo"  optional="false"/&gt;
+&lt;/service&gt;
+</code>
+
+
+** engine：  simple **
+
+location：实现文件的全路径
+
+invoke：simple-method
+
+<code>
+&lt;!--  PartyRelationship  services  --&gt;<br/>
+&lt;simple-method  method-name="createPartyRelationship"  short-description="createPartyRelationship"&gt;<br/>
+&lt;if-empty  field="parameters.roleTypeIdFrom"&gt;&lt;set  field="parameters.roleTypeIdFrom"  value="_NA_"/&gt;&lt;/if-empty&gt;<br/>
+&lt;if-empty  field="parameters.roleTypeIdTo"&gt;&lt;set  field="parameters.roleTypeIdTo"  value="_NA_"/&gt;&lt;/if-empty&gt;<br/>
+&lt;if-empty  field="parameters.partyIdFrom"&gt;&lt;set  field="parameters.partyIdFrom"  from-field="userLogin.partyId"/&gt;&lt;/if-empty&gt;<br/>
+ &lt;if-empty  field="parameters.fromDate"&gt;&lt;now-timestamp  field="parameters.fromDate"/&gt;&lt;/if-empty&gt;<br/>
+ &lt;!--  check  if  not  already  exist  --&gt;<br/>
+&lt;entity-and  entity-name="PartyRelationship"  list="partyRels"  filter-by-date="true"&gt;
+ &lt;field-map  field-name="partyIdFrom"  from-field="parameters.partyIdFrom"/&gt;
+&lt;field-map  field-name="roleTypeIdFrom"  from-field="parameters.roleTypeIdFrom"/&gt;
+ &lt;field-map  field-name="roleTypeIdTo"  from-field="parameters.roleTypeIdTo"/&gt;
+&lt;/entity-and&gt;<br/>
+ &lt;if-empty  field="partyRels"&gt;
+ &lt;make-value  value-field="newEntity"  entity-name="PartyRelationship"/&gt;
+&lt;set-pk-fields  map="parameters"  value-field="newEntity"/&gt;
+ &lt;set-nonpk-fields  map="parameters"  value-field="newEntity"/&gt;
+&lt;create-value  value-field="newEntity"/&gt;
+ &lt;/if-empty&gt;
+&lt;/simple-method&gt;
+</code>
+ 
+** entity-auto服务 **
+
+例：specialpurpose/example/servicedef/services.xml
+
+<code>
+ &lt;!--  Example  &amp;  Related  Services  --&gt;<br/>
+ &lt;service  name="createExample"  default-entity-name="Example"  engine="entity-auto"  invoke="create"  auth="true"&gt;
+ &lt;description&gt;Create  a  Example&lt;/description&gt;
+&lt;permission-service  service-name="exampleGenericPermission"  main-action="CREATE"/&gt;
+&lt;auto-attributes  include="pk"  mode="OUT"  optional="false"/&gt;
+&lt;auto-attributes  include="nonpk"  mode="IN"  optional="true"/&gt;
+ &lt;override  name="exampleTypeId"  optional="false"/&gt;
+ &lt;override  name="statusId"  optional="false"/&gt;
+ &lt;override  name="exampleName"  optional="false"/&gt;
+&lt;/service&gt;
+</code>
+
+
+### RMI服务
+
+例：applications/accounting/servicedef/services_rita.xml
+
+<code>
+ &lt;!--  RiTA  (Remote)  Implementations  --&gt;<br/>
+ &lt;service  name="ritaCCAuthRemote"  engine="rmi"
+ location="rita-rmi"  invoke="ritaCCAuth"&gt;
+   &lt;description&gt;RiTA  Credit  Card  Pre-Authorization/Sale&lt;/description&gt;
+   &lt;implements  service="ccAuthInterface"/&gt;
+ &lt;/service&gt;
+
+
+** engine：rmi ** 
+
+location：rita-rmi这个是是在serviceengine.xml中配置的
+
+&lt;service-location  name="rita-rmi"  location="rmi://localhost:1099/RMIDispatcher"/&gt;
+invoke：ritaCCAuth  服务名，该服务如下，也在applications/accounting/servicedef/services_rita.xml中
+&lt;!--  RiTA  (Local)  Implementations  --&gt;
+ &lt;service  name="ritaCCAuth"  engine="java"  export="true"
+ location="org.ofbiz.accounting.thirdparty.gosoftware.RitaServices"  invoke="ccAuth"&gt;
+   &lt;description&gt;RiTA  Credit  Card  Pre-Authorization/Sale&lt;/description&gt;
+   &lt;implements  service="ccAuthInterface"/&gt;
+ &lt;/service&gt;
+
+
+设置为可被远程调用  export=“true”
+
+ 
+
+### route  服务
+
+这类类型不常用，路由服务使用路由引擎定义，当一个路由服务被调用时，不会执行调用，但是所有定义的ECA会在适当事件中运行。通过利用ECA服务选项可以路由（‘route‘）到其他服务
+
+ 
+
+###  http服务
+
+使用http服务是调用定义在其他系统上远程服务的一种方法。本地定义应该和远程定义一致，但是引擎应该是http，location应该是httpService事件在远程系统上运行的完全URL，方法应该是远程系统上被调用运行的服务名。远程系统必须有挂在HTTP服务上公允的httpService事件。默认情况下，commonapp  web应用程序有用来接收服务请求的这样的事件。在远程系统上的服务必须将export属性设为true允许远程调用。HTTP服务本质就是同步的。
+
+ 
+
+###  JMS服务
+
+JMS服务和HTTP服务很相似，除了服务请求被发送到JMS  topic/queue。engine属性应该设置为jms，location属性应该设置为在serviceengine.xml文件中定义的JMS服务名。方法应该是你请求要执行的远程系统上的JMS服务名。本质就是异步
+
+ 
 
 ### 服务组
 
-服务组是由多个服务组成的服务集，当调用初始化组服务时应该运行。使用组服务定义文件定义一个组服务，包含这个组服务所有服务需要的参数/属性。location  属性不需要，invoke  属性定义了要运行的组服务名。当这个组服务被调用时，组中定义的所有服务都会被调用。
+服务组由多个服务组成的集合。
 
-组的定义很简单，他包含一个拥有多个  service  元素的  group  元素。group  元素包含一个  name  属性和一个  mode  属性，  mode   用来定义服务怎么执行。service   元素更像  ECA   中的action元素，不同之处在于  result-to-context  属性的默认值。
+组的定义：包含一个拥有多个service元素的group元素。group元素包含name属性和mode属性
 
-&lt;service-group&gt;
-        &lt;group  name="testGroup"  send-mode="all"&gt;
-                &lt;service  name="testScv"  mode="sync"/&gt;
-                &lt;service  name="testBsh"  mode="sync"/&gt;
-        &lt;/group&gt;
-&lt;/service-group&gt;
+mode用来定义服务怎么执行
 
-group  标签
+service：类似于ECA中的action元素，不同之处在于resutl-to-context属性的默认值不同。
 
-<table border><tr><td width=990>属性名</td><td width=748>需要?</td><td width=6842>描述</td><tr><td width=990>name</td><td width=748>Y</td><td width=6842>要调用的服务组的名字。</td><tr><td width=990>send-mode</td><td width=748>N</td><td width=6842>这些服务被调用的方式。可为：none, all, first-available, random, 或 round-robin。默认为all。</td></table>
+例：applications/workeffort/servicedef/service_groups.xml
 
-service  标签
 
-<table border><tr><td width=1446>属性名</td><td width=747>需要?</td><td width=6387>描述</td><tr><td width=1446>service</td><td width=747>N</td><td width=6387>这个服务组要调用的服务名。</td><tr><td width=1446>mode</td><td width=747>Y</td><td width=6387>这个服务被调用的方式。可为sync 或 async。async 将不会更新 context 即使 result-to-context 设置为 true。</td><tr><td width=1446>result-to-context</td><td width=747>N</td><td width=6387>组服务执行的结果是否更新服务的上下文(context)，默认为 false.。</td></table>
+&lt;service-group  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/service-group.xsd"&gt;
+ &lt;group  name="updateWorkEffortAndAssoc"  send-mode="all"    &gt;
+  &lt;invoke  name="updateWorkEffort"  mode="sync"/&gt;
+   &lt;invoke  name="updateWorkEffortAssoc"  mode="sync"/&gt;
+ &lt;/group&gt;
+ &lt;group  name="createWorkEffortRequestItemAndRequestItem"  send-mode="all"    &gt;
+   &lt;invoke  name="checkCustRequestItemExists"  mode="sync"    result-to-context="true"/&gt;
+   &lt;invoke  name="createWorkEffortRequestItem"  mode="sync"/&gt;
+ &lt;/group&gt;
+&lt;/service-group&gt;
 
-### 路由服务(Route  services) 
 
-路由服务使用路由服务引擎定义。当一个路由服务被调用时，不会执行调用，但是所有定义的  ECA  会在适当事件中运行。这种类型的服务不常用，但是通过利用ECA服务选项可以路由(  'route')  到其他服务。
+ 
 
-### HTTP  服务
+## 调用服务
 
-使用HTTP服务是调用定义在其他系统上远程服务的一种方法。本地定义应该和远程定义一致，但是引擎应该是http，location  应该是httpService  事件在远程系统上运行的完全URL，方法应该是远程系统上被调用运行的服务名。远程系统必须有挂在  HTTP服务上公允的  httpService  事件。默认情况下，commonapp  web  应用程序有用来接收服务请求的这样的事件。在远程系统上的服务必须将export属性设为true允许远程调用。HTTP  服务本质就是同步的。
+调用一个存在的服务是非常简单的，可以通过webtools的Service  Engine  Tools查看具体的服务信息
 
-### JMS  服务
+### 使用java方式调用服务
 
-JMS  服务和  HTTP  服务很相似，除了服务请求被发送到JMS  topic/queue。engine  属性应该设置为  jms，location  属性因该设置为在serviceengine.xml  文件中定义的  JMS  服务名(HYPERLINK  "../../../Documents  and  Settings/Àî¼ª³É/×ÀÃæ/serviceconfig.html"  \l  "JMS"服务配置)。方法应该是你请求要执行的远程系统上的  JMS  服务名。本质就是异步的。
+例：applications/content/src/org/ofbiz/content/search/SearchEvents.java
 
-## 服务引擎配置指南
+<code>
+public  static  String  indexTree(HttpServletRequest  request,  HttpServletResponse  response)  {
+        Map&lt;String,  Object&gt;  result;
+        Map&lt;String,  Object&gt;  serviceInMap  =  FastMap.newInstance();
+        HttpSession  session  =  request.getSession();
+        GenericValue  userLogin  =  (GenericValue)session.getAttribute("userLogin");
+        serviceInMap.put("userLogin",  userLogin);
+        LocalDispatcher  dispatcher  =  (LocalDispatcher)  request.getAttribute("dispatcher");
+        Map&lt;String,  Object&gt;  paramMap  =  UtilHttp.getParameterMap(request);
+        String  siteId  =  (String)paramMap.get("contentId");
+      serviceInMap.put("contentId",  siteId);
+      try  {
+ 			  result  =  dispatcher.runSync("indexTree",  serviceInMap);
+      }  catch  (GenericServiceException  e)  {
+           String  errorMsg  =  "Error  calling  the  indexTree  service."  +  e.toString();
+           Debug.logError(e,  errorMsg,  module);
+           request.setAttribute("_ERROR_MESSAGE_",  errorMsg  +  e.toString());
+           return  "error";
+      }
+      String  errMsg  =  ServiceUtil.getErrorMessage(result);
+      if  (Debug.infoOn())  Debug.logInfo("errMsg:"  +  errMsg,  module);
+      if  (Debug.infoOn())  Debug.logInfo("result:"  +  result,  module);
+      if  (UtilValidate.isEmpty(errMsg))  {
+       List&lt;String&gt;  badIndexList  =  UtilGenerics.checkList(result.get("badIndexList"));
+       if  (Debug.infoOn())  Debug.logInfo("badIndexList:"  +  badIndexList,  module);
+       String  badIndexMsg  =  StringUtil.join(badIndexList,  "\n")  +  badIndexList.size()  +  "  entities  not  indexed";
+       Integer  goodIndexCount  =  (Integer)result.get("goodIndexCount");
+       String  goodIndexMsg  =  goodIndexCount  +  "  entities  indexed.";
+       if  (Debug.infoOn())  Debug.logInfo("goodIndexCount:"  +  goodIndexCount,  module);
+       ServiceUtil.setMessages(request,  badIndexMsg,  goodIndexMsg,  null);
+       return  "success";
+          }  else  {
+       ServiceUtil.setMessages(request,  errMsg,  null,  null);
+       return  "error";
+          }
+       }
+</code>
 
-### 简介
+ 
+调用服务
 
-本篇文章描述服务引擎的设置。开始介绍总体思想，然后介绍serviceengine.xml的每部分并结识可用的元素及其用法。serviceengine.xml文件为不同用途提供有例子，文件位于ofbiz/commonapp/etc/serviceengine.xml。
-服务引擎的设置通过一个叫做serviceengine.xml的简单XML文件来完成，必须位于  classpath某处。
+<code>
+     try  {
+       result  =  dispatcher.runSync("indexTree",  serviceInMap);
+          }  catch  (GenericServiceException  e)  {
+       String  errorMsg  =  "Error  calling  the  indexTree  service."  +  e.toString();
+       Debug.logError(e,  errorMsg,  module);
+       request.setAttribute("_ERROR_MESSAGE_",  errorMsg  +  e.toString());
+       return  "error";
+      }
+</code>
 
-###  验证
+ 
 
-authorization  标签设置服务授权需要调用的服务。这个标签只有一个属性  service-name；属性值应该是用来授权的服务名。默认定义为使用通用OFBiz  userLogin  服务。 
+如上调用了indxTree服务，该服务在applications/content/servicedef/services.xml中被定义
 
-###  线程池
+<code>
+ &lt;service  name="indexTree"  auth="true"  engine="java"  validate="true"  transaction-timeout="7200"
+  location="org.ofbiz.content.search.SearchServices"  invoke="indexTree"&gt;
+   &lt;description&gt;Index  content  under  publish  point&lt;/description&gt;
+   &lt;attribute  mode="IN"  name="contentId"  optional="false"  type="String"/&gt;
+   &lt;attribute  mode="OUT"  name="badIndexList"  optional="true"  type="List"/&gt;
+   &lt;attribute  mode="OUT"  name="goodIndexCount"  optional="true"  type="Integer"/&gt;
+ &lt;/service&gt;
+</code>
+ 
 
-工作调度器(job  scheduler)异步调用工作/服务。它包含池化的线程和几个请求线程。thread-pool  标签用来配置每个线程怎么操作。有如下属型可用。
+ 
 
-<table border><tr><td width=1134>属性名</td><td width=746>需要?</td><td width=3854>描述</td><tr><td width=1134>Ttl</td><td width=746>Y</td><td width=3854>每个请求线程的存活时间。达到时间线程将被销毁。</td><tr><td width=1134>wait-millis</td><td width=746>Y</td><td width=3854>每个请求线程在检查通过运行前休眠的时间。</td><tr><td width=1134>jobs</td><td width=746>Y</td><td width=3854>每个请求线程在销毁之前可运行的工作数。</td><tr><td width=1134>min-threads</td><td width=746>Y</td><td width=3854>线程池中保持的请求线程的最小数。</td><tr><td width=1134>max-threads</td><td width=746>Y</td><td width=3854>线程池中将会创建请求线程的最大数。</td><tr><td width=1134>poll-enabled</td><td width=746>Y</td><td width=3854>为'true'scheduler 就会poll数据库来调度工作。</td><tr><td width=1134>poll-db-millis</td><td width=746>Y</td><td width=3854>如果线程池可用，本属性用来定义池化线程运行的频率。</td></table>
+###  smiple-method：使用simple-method方式调用服务
 
-### 引擎定义
+例：applications/accounting/script/org/ofbiz/accounting/payment/PaymentServices.xml
 
-每一个  GenericEngine  接口的实现都需要在服务定义中定义，engine  标签有如下属性： 
+<code>
+ &lt;simple-method  method-name="createPaymentAndApplication"  short-description="Create  a  payment  and  a  payment  application  for  the  full  amount"&gt;
+   &lt;set-service-fields  service-name="createPayment"  map="parameters"  to-map="createPaymentInMap"/&gt;
+   &lt;call-service  service-name="createPayment"  in-map-name="createPaymentInMap"&gt;
+ &lt;result-to-field  field="paymentId"  result-name="paymentId"/&gt;
+  &lt;/call-service&gt;
+   &lt;check-errors/&gt;
+   &lt;set-service-fields  service-name="createPaymentApplication"  map="parameters"  to-map="createPaymentAppInMap"/&gt;
+   &lt;set  field="createPaymentAppInMap.paymentId"  from-field="paymentId"/&gt;
+   &lt;set  field="createPaymentAppInMap.amountApplied"  from-field="parameters.amount"/&gt;
+   &lt;call-service  service-name="createPaymentApplication"  in-map-name="createPaymentAppInMap"&gt;
+ &lt;result-to-field  field="paymentApplicationId"  result-name="paymentApplicationId"/&gt;
+   &lt;/call-service&gt;
+   &lt;check-errors/&gt;
+   &lt;field-to-result  field="paymentId"  result-name="paymentId"/&gt;
+   &lt;field-to-result  field="paymentApplicationId"  result-name="paymentApplicationId"/&gt;
+ &lt;/simple-method&gt;
+</code>
 
-<table border><tr><td width=572>属性名</td><td width=510>需要?</td><td width=2654>描述</td><tr><td width=572>name</td><td width=510>Y</td><td width=2654>服务引擎的名字。必须唯一。</td><tr><td width=572>class</td><td width=510>Y</td><td width=2654>GenericEngine 接口的实现类。</td></table>
+ 
 
-### 资源加载器
+调用服务
 
-resource-loader  标签用来设置一个指定的资源加载器以在其他地方加载XML文件和其他资源。有如下属性：
+<code>
+   &lt;call-service  service-name="createPayment"  in-map-name="createPaymentInMap"&gt;
+ &lt;result-to-field  field="paymentId"  result-name="paymentId"/&gt;
+   &lt;/call-service&gt;
+</code>
+ 
 
-<table border><tr><td width=1112>属性名</td><td width=510>需要?</td><td width=6958>描述</td><tr><td width=1112>name</td><td width=510>Y</td><td width=6958>资源加载器的名字。用于其他标签的 'loader' 属性。</td><tr><td width=1112>class</td><td width=510>Y</td><td width=6958>通用抽象类 org.ofbiz.core.service.config.ResourceLoader 的扩展类。可用类包括 FileLoader, UrlLoader, 和 ClasspathLoader，同类 ResourceLoader 位于同一个包中。</td><tr><td width=1112>prepend-env</td><td width=510>N</td><td width=6958>Java环境属性的名称。用来放在全部路径(full location)比较靠前的地方，在前缀前面。可选。</td><tr><td width=1112>prefix</td><td width=510>N</td><td width=6958>当拼装全部路径(full location)时，放在前面的字符串。可选。如果使用了prepended 环境属性，将会置于其后并位于每个指定资源位置的前面。</td></table>
+该服务createPayment定义于applications/accounting/script/org/ofbiz/accounting/payment/PaymentServices.xml
 
-### 全局服务
+<code> 
+ &lt;simple-method  method-name="createPayment"  short-description="Create  a  Payment"&gt;
+   &lt;if&gt;
+ &lt;condition&gt;
+  &lt;and&gt;
+    &lt;not&gt;&lt;if-has-permission  permission="PAY_INFO"  action="_CREATE"/&gt;&lt;/not&gt;
+    &lt;not&gt;&lt;if-compare-field  field="userLogin.partyId"  to-field="parameters.partyIdFrom"  operator="equals"/&gt;&lt;/not&gt;
+    &lt;not&gt;&lt;if-compare-field  field="userLogin.partyId"  to-field="parameters.partyIdTo"  operator="equals"/&gt;&lt;/not&gt;
+  &lt;/and&gt;
+ &lt;/condition&gt;
+ &lt;then&gt;
+  &lt;add-error&gt;
+    &lt;fail-property  resource="AccountingUiLabels"  property="AccountingCreatePaymentPermissionError"/&gt;
+  &lt;/add-error&gt;
+ &lt;/then&gt;
+   &lt;/if&gt;
+   &lt;check-errors/&gt;
+   &lt;make-value  entity-name="Payment"  value-field="payment"/&gt;
+   &lt;if-empty  field="parameters.paymentId"&gt;
+ &lt;sequenced-id  sequence-name="Payment"  field="payment.paymentId"/&gt;
+&lt;else&gt;
+  &lt;set  field="payment.paymentId"  from-field="parameters.paymentId"/&gt;
+ &lt;/else&gt;
+   &lt;/if-empty&gt;
+   &lt;field-to-result  field="payment.paymentId"  result-name="paymentId"/&gt;
+   &lt;if-not-empty  field="parameters.paymentMethodId"&gt;
+ &lt;entity-one  entity-name="PaymentMethod"  value-field="paymentMethod"&gt;
+  &lt;field-map  field-name="paymentMethodId"  from-field="parameters.paymentMethodId"/&gt;
+ &lt;/entity-one&gt;
+ &lt;if-compare-field  field="parameters.paymentMethodTypeId"  operator="not-equals"  to-field="paymentMethod.paymentMethodTypeId"&gt;
+  &lt;log  level="info"  message="Replacing  passed  payment  method  type  [${parameters.paymentMethodTypeId}]  with  payment  method  type  [${paymentMethod.paymentMethodTypeId}]  for  payment  method  [${parameters.paymentMethodId}]"/&gt;
+  &lt;set  field="parameters.paymentMethodTypeId"  from-field="paymentMethod.paymentMethodTypeId"/&gt;
+ &lt;/if-compare-field&gt;
+   &lt;/if-not-empty&gt;
+   &lt;if-not-empty  field="parameters.paymentPreferenceId"&gt;
+ &lt;entity-one  value-field="orderPaymentPreference"  entity-name="OrderPaymentPreference"&gt;
+  &lt;field-map  field-name="orderPaymentPreferenceId"  from-field="parameters.paymentPreferenceId"/&gt;
+ &lt;/entity-one&gt;
+ &lt;if-empty  field="parameters.paymentMethodId"&gt;
+ &lt;set  field="parameters.paymentMethodId"  from-field="orderPaymentPreference.paymentMethodId"/&gt;
+ &lt;/if-empty&gt;
+ &lt;if-empty  field="parameters.paymentMethodTypeId"&gt;
+  &lt;set  field="parameters.paymentMethodTypeId"  from-field="orderPaymentPreference.paymentMethodTypeId"/&gt;
+ &lt;/if-empty&gt;
+   &lt;/if-not-empty&gt;
+   &lt;if-empty  field="parameters.paymentMethodTypeId"&gt;
+ &lt;add-error&gt;
+  &lt;fail-property  resource="AccountingUiLabels"  property="AccountingPaymentMethodIdPaymentMethodTypeIdNullError"/&gt;
+ &lt;/add-error&gt;
+   &lt;/if-empty&gt;
+   &lt;set-nonpk-fields  map="parameters"  value-field="payment"/&gt;
+   &lt;if-empty  field="payment.effectiveDate"&gt;
+ &lt;now-timestamp  field="payment.effectiveDate"/&gt;
+   &lt;/if-empty&gt;
+   &lt;create-value  value-field="payment"/&gt;
+ &lt;/simple-method&gt;
+</code>
 
-global-services  标签用来定义服务定义文件的位置。有如下属性：
+ 
 
-<table border><tr><td width=716>属性名</td><td width=510>需要?</td><td width=3753>描述</td><tr><td width=716>loader</td><td width=510>Y</td><td width=3753>前面 resource-loader 标签定义的资源加载器。</td><tr><td width=716>location</td><td width=510>Y</td><td width=3753>指明资源加载器加载资源要使用的文件的位置。</td></table>
+### 异步方式调用
 
-### 服务组
+<code>
+ &lt;simple-method  method-name="sendInvoicePerEmail"  short-description="Send  an  invoice  per  Email"&gt;
+   &lt;set-service-fields  service-name="sendMailFromScreen"  map="parameters"  to-map="emailParams"/&gt;
+   &lt;set  field="emailParams.xslfoAttachScreenLocation"  value="component://accounting/widget/AccountingPrintScreens.xml#InvoicePDF"/&gt;
+   &lt;set  field="emailParams.bodyParameters.invoiceId"  from-field="parameters.invoiceId"/&gt;
+  &lt;set  field="emailParams.bodyParameters.userLogin"  from-field="parameters.userLogin"/&gt;
+   &lt;set  field="emailParams.bodyParameters.other"  from-field="parameters.other"/&gt;&lt;!--  to  to  print  in  'other  currency'  --&gt;
+   &lt;call-service-asynch  service-name="sendMailFromScreen"  in-map-name="emailParams"/&gt;
+   &lt;property-to-field  resource="AccountingUiLabels"  property="AccountingEmailScheduledToSend"  field="successMessage"/&gt;
+ &lt;/simple-method&gt;
+</code>
 
-service-groups  标签用来定义服务组定义文件的位置。有如下属性：
+ 
 
-<table border><tr><td width=716>属性名</td><td width=510>需要?</td><td width=3753>描述</td><tr><td width=716>loader</td><td width=510>Y</td><td width=3753>前面 resource-loader 标签定义的资源加载器。</td><tr><td width=716>location</td><td width=510>Y</td><td width=3753>指明资源加载器加载资源要使用的文件的位置。</td></table>
+异步调用代码
 
-### ECAs
+<code>
+    &lt;call-service-asynch  service-name="sendMailFromScreen"  in-map-name="emailParams"/&gt;
+</code>
+ 
 
-service-ecas  标签用来定义服务条件触发动作定义文件的位置。有如下属性： 
+ 
 
-<table border><tr><td width=716>属性名</td><td width=510>需要?</td><td width=3753>描述</td><tr><td width=716>loader</td><td width=510>Y</td><td width=3753>前面 resource-loader 标签定义的资源加载器。</td><tr><td width=716>location</td><td width=510>Y</td><td width=3753>指明资源加载器加载资源要使用的文件的位置。</td></table>
+### 服务中的事务申明
 
-###  JMS
+一个服务是否使用事务，是否必须是独立的事务，以及事务的超时时间设置，均可以在服务定义时声明，或者在通过服务引擎调用服务时指定（传入）
 
-jms-service  标签为JMS定义服务的位置。 
+#### 服务定义时申明事务
 
-<table border><tr><td width=990>属性名</td><td width=497>需要?</td><td width=7093>描述</td><tr><td width=990>name</td><td width=497>Y</td><td width=7093>JMS服务的名字，在服务定义中作为 location 的值。</td><tr><td width=990>send-mode</td><td width=497>Y</td><td width=7093>向定义的服务发送的模式有：none, all, first-available, random, round-robin, 或 least-load。</td></table>
+例：applications/order/servicedef/services.xml
+<code>
+ &lt;service  name="sendOrderConfirmation"  engine="java"  require-new-transaction="true"  max-retry="3"
+ location="org.ofbiz.order.order.OrderServices"  invoke="sendOrderConfirmNotification"&gt;
+   &lt;description&gt;Send  a  order  confirmation&lt;/description&gt;
+   &lt;implements  service="orderNotificationInterface"/&gt;
+ &lt;/service&gt;
+</code>
+ 
 
-jms-service  可以包含一个或多个  server  标签，  server  标签有如下属性：
+#### 在服务调用时指定
 
-<table border><tr><td width=1486>属性名</td><td width=510>需要?</td><td width=3953>描述</td><tr><td width=1486>jndi-server-name</td><td width=510>Y</td><td width=3953>在 jndiservers.xml 文件中定义的 JNDI 服务名字。</td><tr><td width=1486>jndi-name</td><td width=510>Y</td><td width=3953>在 JNDI 中为 JMS 工厂定义的名字。</td><tr><td width=1486>topic-queue</td><td width=510>Y</td><td width=3953>主题或队列( topic or queue)的名字。</td><tr><td width=1486>type</td><td width=510>Y</td><td width=3953>JMS 类型可能为主题或队列( topic or queue)。</td><tr><td width=1486>username</td><td width=510>Y</td><td width=3953>连接主题/队列(topic/queue)的用户名。</td><tr><td width=1486>password</td><td width=510>Y</td><td width=3953>连接主题/队列(topic/queue)的密码。</td><tr><td width=1486>listen</td><td width=510>Y</td><td width=3953>设置是否对主题/队列(topic/queue)起用监听。</td></table>
+java代码
+<code>
+dispatcher.runSync(servicename,  context,transactionTimeOut,requireNewTransaction);
+dispatcher.runAsync(servicename,  context,requester,persist,transactionTimeOut,requireNewTransaction);
+</code>
+ 
 
-在  jndiservers.xml  文件中定义的  jndi-server  应该指出JMS  客户端  APIs  的位置。根据定义的  JMS  类型来决定使用  TopicConnectionFactory  或  QueueConnectionFactory  。JNDI  名字应该指出在  JNDI  中包含连接工厂实例的对象名字。
+
+#### 事务的管理规则
+
+1、调用服务时传入的参数（是否为独立事务、事务的超时时间）的优先级高于服务定义时定义的参数
+2、若服务在定义时声明了不使用事务（use-transaction="false")，那么无论是定义什么的独立事务和超市时间，还是调用服务的时候定义了独立事务和超市时间，都将不会生效
+3、服务被申明为不使用事务，则所有的默认为每次操作位一个独立的事务
+
+ 
+
+#### 事务的提交规则
+
+1、没有在服务内部显示操作事务的情况下，事务由服务引擎来管理，当服务返回error时，回滚事务；当服务返回failure或success时提交事务
+2、服务间调用使用同一个事务时，内层服务返回failure或success，不提交事务，在最外层服务返回时方提交
+3、服务间调用使用同一个事务时，任何一个服务返回error，事务均会回滚。
+4、服务间调用使用独立事务时，一个事务回滚或提交不影响其他事务，但一个事务不能访问另一个事务尚未提交的数据
+5、服务执行超时，回滚事务
+
+
+
+## 服务超时
+
+1、服务执行是否超时由服务引擎来控制，超时时间，在定义服务时指定，或调用服务的时候指定，若不指定，默认时间为60秒
+2、这个超时时间为服务执行的总时间，包括服务内部执行的其他操作时间的总和
+3、如果没有开启事务，则配置超时时间也不会生效。
+ 
+
+EEAC、SEAC、MCA概念
+
+EEAC：在实体上触发一个服务的调用
+
+SEAC：当条件满足时，调用另外一个服务
+
+MCA：启动javamail-container
