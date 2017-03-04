@@ -73,7 +73,7 @@ interface服务引擎实现了在定义服务时可以共享同样的参数。in
 例：applications/order/servicedef/services.xml
 
 <code>
-&lt;service  name="massOrderChangeInterface"  engine="interface"  location=""  invoke=""&gt;   
+ &lt;service  name="massOrderChangeInterface"  engine="interface"  location=""  invoke=""&gt;   
  &lt;description&gt;Interface  for  Mass  Order  Change  Services&lt;/description&gt;   
  &lt;attribute  name="orderIdList"  type="List"  mode="IN"  optional="false"/&gt;   
 &lt;/service&gt;   
@@ -97,13 +97,13 @@ interface服务引擎实现了在定义服务时可以共享同样的参数。in
  &lt;implements  service="massOrderChangeInterface"/&gt;   
  &lt;/service&gt;   
 </code>
-
+ 
 然后我们分别查看java类org.ofbiz.order.order.OrderServices中的方法massPickOrders、massChangeApproved、massProcessOrders
 
 代码片中都存在如下代码，可以获取参数接口定义的变量orderIdList
 
 <code>
-  List&lt;String&gt;  orderIds  =  UtilGenerics.checkList(context.get("orderIdList"));   
+   List&lt;String&gt;  orderIds  =  UtilGenerics.checkList(context.get("orderIdList"));   
 </code>
 
 
@@ -121,7 +121,7 @@ location="org.ofbiz.order.order.OrderServices"  invoke="massPrintOrders"  auth
 </code>
  
 
-查看代码java类org.ofbiz.order.order.OrderServices中的方法massPrintOrders
+ 查看代码java类org.ofbiz.order.order.OrderServices中的方法massPrintOrders
 
 <code>
 String  screenLocation  =  (String)  context.get("screenLocation");
