@@ -10,7 +10,7 @@ ofbiz-component.xml：所有的服务定义文件在每个组件的ofbi-componen
  &lt;entity-resource  type="model"  reader-name="main"  loader="main"  location="entitydef/entitymodel.xml"/&gt; 
  &lt;entity-resource  type="model"  reader-name="main"  loader="main"  location="entitydef/entitymodel_olap.xml"/&gt;   
 &lt;entity-resource  type="group"  reader-name="main"  loader="main"  location="entitydef/entitygroup_olap.xml"/&gt;   
- &lt;entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CommonSecurityData.xml"/&gt;   
+ &lt;entity-resource  type="data"  reader-name="seed"  loader="main"   location="data/CommonSecurityData.xml"/&gt;   
  &lt;entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CommonSystemPropertyData.xml"/&gt;   
  &lt;entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CommonTypeData.xml"/&gt;   
  &lt;entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CountryCodeData.xml"/&gt;   
