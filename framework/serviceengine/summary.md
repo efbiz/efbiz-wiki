@@ -587,8 +587,7 @@ dispatcher.runAsync(servicename,  context,requester,persist,transactionTimeOut,
 4、服务间调用使用独立事务时，一个事务回滚或提交不影响其他事务，但一个事务不能访问另一个事务尚未提交的数据
 5、服务执行超时，回滚事务
 
-
-
+---
 ## 服务超时
 
 1、服务执行是否超时由服务引擎来控制，超时时间，在定义服务时指定，或调用服务的时候指定，若不指定，默认时间为60秒
@@ -596,7 +595,7 @@ dispatcher.runAsync(servicename,  context,requester,persist,transactionTimeOut,
 3、如果没有开启事务，则配置超时时间也不会生效。
  
 
-EEAC、SEAC、MCA概念
+### EEAC、SEAC、MCA概念
 
 EEAC：在实体上触发一个服务的调用
 
