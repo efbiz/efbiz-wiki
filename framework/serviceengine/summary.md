@@ -1,4 +1,4 @@
-## 一、服务引擎指南
+## 服务引擎指南
 
 ### 简介 
 
@@ -120,11 +120,11 @@ try  {
     e.printStackTrace();
 }
 
-## 二、高级特性
+## 高级特性
 
 服务引擎中加入了很多'高级'特性，在下面有例子、定义及信息。
 
-### 1、接口
+### 接口
 
 interface  服务引擎实现了在定义服务时可以共享同样的参数。一个接口服务不能被调用，而是为其他服务继承而定义的。每个接口服务都需要用interface  引擎来定义：
 
@@ -150,7 +150,7 @@ invoke="testExample1"&gt;
 
 testExample1  服务将会和  testInterface  服务拥有完全一样的需要或可选的属性。任何实现testInterface  的服务都将继承其参数/属性。如果需要给指定的服务增加附加属性，可以在  implements  标签后面跟上  attribute  标签。可以在  implements  标签后面重定义某个属性达到重写一个属性的目的。
 
-### 2、ECAs
+### ECAs
 
 ECA  (Event  Condition  Action)  更象是一个触发器。当一个服务被调用时，会执查看是否为这个事件定义任何ECAs  。在验证之前，检验之前，事件在实际调用之前，在输出参数校验之前，在事务提交之前或者在服务返回之前包含进来。然后每个条件都会进行验证，如果全部返回为真，定义的动作就会执行。一个动作就是一个服务，该服务的参数必须已经存在于服务的上下文中。每个ECA可以定义的条件数或者动作数没有限制。
 
@@ -164,15 +164,23 @@ ECA  (Event  Condition  Action)  更象是一个触发器。当一个服务�
 
 eca  标签：
 
-<table border><tr><td width=1102>属性名</td><td width=920>需要?</td><td width=6558>描述</td><tr><td width=1102>service</td><td width=920>Y</td><td width=6558>ECA关联的服务名</td><tr><td width=1102>event</td><td width=920>Y</td><td width=6558>ECA在哪个事件上或之前执行。事件有：auth, in-validate, out-validate, invoke, commit, 或者 return。</td><tr><td width=1102>run-on-error</td><td width=920>N</td><td width=6558>当有错误时是否执行ECA (默认为 false)</td></table>eca  元素应该有0或多个condition/condition-field  元素，1或多个action元素。
+<table border><tr><td width=1102>属性名</td><td width=920>需要?</td><td width=6558>描述</td><tr><td width=1102>service</td><td width=920>Y</td><td width=6558>ECA关联的服务名</td><tr><td width=1102>event</td><td width=920>Y</td><td width=6558>ECA在哪个事件上或之前执行。事件有：auth, in-validate, out-validate, invoke, commit, 或者 return。</td><tr><td width=1102>run-on-error</td><td width=920>N</td><td width=6558>当有错误时是否执行ECA (默认为 false)</td></table>
+
+eca  元素应该有0或多个condition/condition-field  元素，1或多个action元素。
 
 condition  标签
 
-<table border><tr><td width=963>属性名</td><td width=805>需要?</td><td width=6812>描述</td><tr><td width=963>map-name</td><td width=805>N</td><td width=6812>本服务上下文属性的名字，包含要检验的字段名字组成的Map。如果没有指定这个域名，就会使用服务上下文环境（env-name）。</td><tr><td width=963>field-name</td><td width=805>Y</td><td width=6812>要比较的map的名字。</td><tr><td width=963>operator</td><td width=805>Y</td><td width=6812>指定比较操作符，必须为 less, greater, less-equals, greater-equals, equals, not-equals, 或 contains 当中的一个。</td><tr><td width=963>value</td><td width=805>Y</td><td width=6812>字段要比较的值。必须为String,但是可以转换成其他类型。</td><tr><td width=963>type</td><td width=805>N</td><td width=6812>用来进行比较的数据类型。必须是 String, Double, Float, Long, Integer, Date, Time, 或 Timestamp 当中的一个。</td><tr><td width=963>format</td><td width=805>N</td><td width=6812>指定当将String 转换成其他类型(主要是Date, Time 和 Timestamp)时使用的格式说明。</td></table>condition-field  标签
+<table border><tr><td width=963>属性名</td><td width=805>需要?</td><td width=6812>描述</td><tr><td width=963>map-name</td><td width=805>N</td><td width=6812>本服务上下文属性的名字，包含要检验的字段名字组成的Map。如果没有指定这个域名，就会使用服务上下文环境（env-name）。</td><tr><td width=963>field-name</td><td width=805>Y</td><td width=6812>要比较的map的名字。</td><tr><td width=963>operator</td><td width=805>Y</td><td width=6812>指定比较操作符，必须为 less, greater, less-equals, greater-equals, equals, not-equals, 或 contains 当中的一个。</td><tr><td width=963>value</td><td width=805>Y</td><td width=6812>字段要比较的值。必须为String,但是可以转换成其他类型。</td><tr><td width=963>type</td><td width=805>N</td><td width=6812>用来进行比较的数据类型。必须是 String, Double, Float, Long, Integer, Date, Time, 或 Timestamp 当中的一个。</td><tr><td width=963>format</td><td width=805>N</td><td width=6812>指定当将String 转换成其他类型(主要是Date, Time 和 Timestamp)时使用的格式说明。</td></table>
 
-<table border><tr><td width=1196>属性名</td><td width=714>需要?</td><td width=6670>描述</td><tr><td width=1196>map-name</td><td width=714>N</td><td width=6670>本服务上下文属性的名字，包含要检验的字段名字组成的Map。如果没有指定这个域名，就会使用服务上下文环境（env-name）。</td><tr><td width=1196>field-name</td><td width=714>Y</td><td width=6670>要比较的map的名字。</td><tr><td width=1196>operator</td><td width=714>Y</td><td width=6670>指定比较操作符，必须为 less, greater, less-equals, greater-equals, equals, not-equals, 或 contains 当中的一个。</td><tr><td width=1196>to-map-name</td><td width=714>N</td><td width=6670>本服务上下文属性的名字，包含要与之比较的字段名字组成的Map。如果为空就会使用上面的map-name，如果map-name也为空，就会使用服务下文环境（env-name）。</td><tr><td width=1196>to-field-name</td><td width=714>N</td><td width=6670>要与之比较的Map中要比较的字段名，如果为空默认为上面field-name。</td><tr><td width=1196>type</td><td width=714>N</td><td width=6670>用来进行比较的数据类型。必须是 String, Double, Float, Long, Integer, Date, Time, 或 Timestamp 当中的一个。如果没指定默认为String。</td><tr><td width=1196>format</td><td width=714>N</td><td width=6670>指定当将String 转换成其他类型(主要是Date, Time 和 Timestamp)时使用的格式说明。</td></table>action  标签
+condition-field  标签
 
-<table border><tr><td width=1446>属性名</td><td width=576>需要?</td><td width=6558>描述</td><tr><td width=1446>service</td><td width=576>N</td><td width=6558>本动作(action)要调用的服务名。</td><tr><td width=1446>mode</td><td width=576>Y</td><td width=6558>调用服务的方式，可以是sync 或 async。async actions 将不会更新 context 即使 result-to-context 设置为 true.</td><tr><td width=1446>result-to-context</td><td width=576>N</td><td width=6558>action 服务的执行结果是否更新服务的上下文(context)，默认为 true。</td><tr><td width=1446>ignore-error</td><td width=576>N</td><td width=6558>是否忽略本action 服务导致的错误，如果否原始服务就会失败。默认为 true。</td><tr><td width=1446>persist</td><td width=576>N</td><td width=6558>action 服务store/run。可以为 true 或 false。 只有当 mode 属性为 async 时才生效。默认为false。</td></table>###3、服务组
+<table border><tr><td width=1196>属性名</td><td width=714>需要?</td><td width=6670>描述</td><tr><td width=1196>map-name</td><td width=714>N</td><td width=6670>本服务上下文属性的名字，包含要检验的字段名字组成的Map。如果没有指定这个域名，就会使用服务上下文环境（env-name）。</td><tr><td width=1196>field-name</td><td width=714>Y</td><td width=6670>要比较的map的名字。</td><tr><td width=1196>operator</td><td width=714>Y</td><td width=6670>指定比较操作符，必须为 less, greater, less-equals, greater-equals, equals, not-equals, 或 contains 当中的一个。</td><tr><td width=1196>to-map-name</td><td width=714>N</td><td width=6670>本服务上下文属性的名字，包含要与之比较的字段名字组成的Map。如果为空就会使用上面的map-name，如果map-name也为空，就会使用服务下文环境（env-name）。</td><tr><td width=1196>to-field-name</td><td width=714>N</td><td width=6670>要与之比较的Map中要比较的字段名，如果为空默认为上面field-name。</td><tr><td width=1196>type</td><td width=714>N</td><td width=6670>用来进行比较的数据类型。必须是 String, Double, Float, Long, Integer, Date, Time, 或 Timestamp 当中的一个。如果没指定默认为String。</td><tr><td width=1196>format</td><td width=714>N</td><td width=6670>指定当将String 转换成其他类型(主要是Date, Time 和 Timestamp)时使用的格式说明。</td></table>
+
+action  标签
+
+<table border><tr><td width=1446>属性名</td><td width=576>需要?</td><td width=6558>描述</td><tr><td width=1446>service</td><td width=576>N</td><td width=6558>本动作(action)要调用的服务名。</td><tr><td width=1446>mode</td><td width=576>Y</td><td width=6558>调用服务的方式，可以是sync 或 async。async actions 将不会更新 context 即使 result-to-context 设置为 true.</td><tr><td width=1446>result-to-context</td><td width=576>N</td><td width=6558>action 服务的执行结果是否更新服务的上下文(context)，默认为 true。</td><tr><td width=1446>ignore-error</td><td width=576>N</td><td width=6558>是否忽略本action 服务导致的错误，如果否原始服务就会失败。默认为 true。</td><tr><td width=1446>persist</td><td width=576>N</td><td width=6558>action 服务store/run。可以为 true 或 false。 只有当 mode 属性为 async 时才生效。默认为false。</td></table>
+
+### 服务组
 
 服务组是由多个服务组成的服务集，当调用初始化组服务时应该运行。使用组服务定义文件定义一个组服务，包含这个组服务所有服务需要的参数/属性。location  属性不需要，invoke  属性定义了要运行的组服务名。当这个组服务被调用时，组中定义的所有服务都会被调用。
 
@@ -193,53 +201,67 @@ group  标签
 
 路由服务使用路由服务引擎定义。当一个路由服务被调用时，不会执行调用，但是所有定义的  ECA  会在适当事件中运行。这种类型的服务不常用，但是通过利用ECA服务选项可以路由(  'route')  到其他服务。
 
-### 5、HTTP  服务
+### HTTP  服务
 
 使用HTTP服务是调用定义在其他系统上远程服务的一种方法。本地定义应该和远程定义一致，但是引擎应该是http，location  应该是httpService  事件在远程系统上运行的完全URL，方法应该是远程系统上被调用运行的服务名。远程系统必须有挂在  HTTP服务上公允的  httpService  事件。默认情况下，commonapp  web  应用程序有用来接收服务请求的这样的事件。在远程系统上的服务必须将export属性设为true允许远程调用。HTTP  服务本质就是同步的。
 
-### 6、JMS  服务
+### JMS  服务
 
 JMS  服务和  HTTP  服务很相似，除了服务请求被发送到JMS  topic/queue。engine  属性应该设置为  jms，location  属性因该设置为在serviceengine.xml  文件中定义的  JMS  服务名(HYPERLINK  "../../../Documents  and  Settings/Àî¼ª³É/×ÀÃæ/serviceconfig.html"  \l  "JMS"服务配置)。方法应该是你请求要执行的远程系统上的  JMS  服务名。本质就是异步的。
 
-##三、服务引擎配置指南
+## 服务引擎配置指南
 
-###1、简介
+### 简介
 
 本篇文章描述服务引擎的设置。开始介绍总体思想，然后介绍serviceengine.xml的每部分并结识可用的元素及其用法。serviceengine.xml文件为不同用途提供有例子，文件位于ofbiz/commonapp/etc/serviceengine.xml。
 服务引擎的设置通过一个叫做serviceengine.xml的简单XML文件来完成，必须位于  classpath某处。
 
-2、###验证
+###  验证
 
 authorization  标签设置服务授权需要调用的服务。这个标签只有一个属性  service-name；属性值应该是用来授权的服务名。默认定义为使用通用OFBiz  userLogin  服务。 
 
-3、###线程池
+###  线程池
 
 工作调度器(job  scheduler)异步调用工作/服务。它包含池化的线程和几个请求线程。thread-pool  标签用来配置每个线程怎么操作。有如下属型可用。
 
-<table border><tr><td width=1134>属性名</td><td width=746>需要?</td><td width=3854>描述</td><tr><td width=1134>Ttl</td><td width=746>Y</td><td width=3854>每个请求线程的存活时间。达到时间线程将被销毁。</td><tr><td width=1134>wait-millis</td><td width=746>Y</td><td width=3854>每个请求线程在检查通过运行前休眠的时间。</td><tr><td width=1134>jobs</td><td width=746>Y</td><td width=3854>每个请求线程在销毁之前可运行的工作数。</td><tr><td width=1134>min-threads</td><td width=746>Y</td><td width=3854>线程池中保持的请求线程的最小数。</td><tr><td width=1134>max-threads</td><td width=746>Y</td><td width=3854>线程池中将会创建请求线程的最大数。</td><tr><td width=1134>poll-enabled</td><td width=746>Y</td><td width=3854>为'true'scheduler 就会poll数据库来调度工作。</td><tr><td width=1134>poll-db-millis</td><td width=746>Y</td><td width=3854>如果线程池可用，本属性用来定义池化线程运行的频率。</td></table>###4、引擎定义
+<table border><tr><td width=1134>属性名</td><td width=746>需要?</td><td width=3854>描述</td><tr><td width=1134>Ttl</td><td width=746>Y</td><td width=3854>每个请求线程的存活时间。达到时间线程将被销毁。</td><tr><td width=1134>wait-millis</td><td width=746>Y</td><td width=3854>每个请求线程在检查通过运行前休眠的时间。</td><tr><td width=1134>jobs</td><td width=746>Y</td><td width=3854>每个请求线程在销毁之前可运行的工作数。</td><tr><td width=1134>min-threads</td><td width=746>Y</td><td width=3854>线程池中保持的请求线程的最小数。</td><tr><td width=1134>max-threads</td><td width=746>Y</td><td width=3854>线程池中将会创建请求线程的最大数。</td><tr><td width=1134>poll-enabled</td><td width=746>Y</td><td width=3854>为'true'scheduler 就会poll数据库来调度工作。</td><tr><td width=1134>poll-db-millis</td><td width=746>Y</td><td width=3854>如果线程池可用，本属性用来定义池化线程运行的频率。</td></table>
+
+### 引擎定义
 
 每一个  GenericEngine  接口的实现都需要在服务定义中定义，engine  标签有如下属性： 
 
-<table border><tr><td width=572>属性名</td><td width=510>需要?</td><td width=2654>描述</td><tr><td width=572>name</td><td width=510>Y</td><td width=2654>服务引擎的名字。必须唯一。</td><tr><td width=572>class</td><td width=510>Y</td><td width=2654>GenericEngine 接口的实现类。</td></table>###5、资源加载器
+<table border><tr><td width=572>属性名</td><td width=510>需要?</td><td width=2654>描述</td><tr><td width=572>name</td><td width=510>Y</td><td width=2654>服务引擎的名字。必须唯一。</td><tr><td width=572>class</td><td width=510>Y</td><td width=2654>GenericEngine 接口的实现类。</td></table>
+
+### 资源加载器
 
 resource-loader  标签用来设置一个指定的资源加载器以在其他地方加载XML文件和其他资源。有如下属性：
 
-<table border><tr><td width=1112>属性名</td><td width=510>需要?</td><td width=6958>描述</td><tr><td width=1112>name</td><td width=510>Y</td><td width=6958>资源加载器的名字。用于其他标签的 'loader' 属性。</td><tr><td width=1112>class</td><td width=510>Y</td><td width=6958>通用抽象类 org.ofbiz.core.service.config.ResourceLoader 的扩展类。可用类包括 FileLoader, UrlLoader, 和 ClasspathLoader，同类 ResourceLoader 位于同一个包中。</td><tr><td width=1112>prepend-env</td><td width=510>N</td><td width=6958>Java环境属性的名称。用来放在全部路径(full location)比较靠前的地方，在前缀前面。可选。</td><tr><td width=1112>prefix</td><td width=510>N</td><td width=6958>当拼装全部路径(full location)时，放在前面的字符串。可选。如果使用了prepended 环境属性，将会置于其后并位于每个指定资源位置的前面。</td></table>###6、全局服务
+<table border><tr><td width=1112>属性名</td><td width=510>需要?</td><td width=6958>描述</td><tr><td width=1112>name</td><td width=510>Y</td><td width=6958>资源加载器的名字。用于其他标签的 'loader' 属性。</td><tr><td width=1112>class</td><td width=510>Y</td><td width=6958>通用抽象类 org.ofbiz.core.service.config.ResourceLoader 的扩展类。可用类包括 FileLoader, UrlLoader, 和 ClasspathLoader，同类 ResourceLoader 位于同一个包中。</td><tr><td width=1112>prepend-env</td><td width=510>N</td><td width=6958>Java环境属性的名称。用来放在全部路径(full location)比较靠前的地方，在前缀前面。可选。</td><tr><td width=1112>prefix</td><td width=510>N</td><td width=6958>当拼装全部路径(full location)时，放在前面的字符串。可选。如果使用了prepended 环境属性，将会置于其后并位于每个指定资源位置的前面。</td></table>
+
+### 全局服务
 
 global-services  标签用来定义服务定义文件的位置。有如下属性：
 
-<table border><tr><td width=716>属性名</td><td width=510>需要?</td><td width=3753>描述</td><tr><td width=716>loader</td><td width=510>Y</td><td width=3753>前面 resource-loader 标签定义的资源加载器。</td><tr><td width=716>location</td><td width=510>Y</td><td width=3753>指明资源加载器加载资源要使用的文件的位置。</td></table>###7、服务组
+<table border><tr><td width=716>属性名</td><td width=510>需要?</td><td width=3753>描述</td><tr><td width=716>loader</td><td width=510>Y</td><td width=3753>前面 resource-loader 标签定义的资源加载器。</td><tr><td width=716>location</td><td width=510>Y</td><td width=3753>指明资源加载器加载资源要使用的文件的位置。</td></table>
+
+### 服务组
 
 service-groups  标签用来定义服务组定义文件的位置。有如下属性：
 
-<table border><tr><td width=716>属性名</td><td width=510>需要?</td><td width=3753>描述</td><tr><td width=716>loader</td><td width=510>Y</td><td width=3753>前面 resource-loader 标签定义的资源加载器。</td><tr><td width=716>location</td><td width=510>Y</td><td width=3753>指明资源加载器加载资源要使用的文件的位置。</td></table>###8、ECAs
+<table border><tr><td width=716>属性名</td><td width=510>需要?</td><td width=3753>描述</td><tr><td width=716>loader</td><td width=510>Y</td><td width=3753>前面 resource-loader 标签定义的资源加载器。</td><tr><td width=716>location</td><td width=510>Y</td><td width=3753>指明资源加载器加载资源要使用的文件的位置。</td></table>
+
+### ECAs
 
 service-ecas  标签用来定义服务条件触发动作定义文件的位置。有如下属性： 
 
-<table border><tr><td width=716>属性名</td><td width=510>需要?</td><td width=3753>描述</td><tr><td width=716>loader</td><td width=510>Y</td><td width=3753>前面 resource-loader 标签定义的资源加载器。</td><tr><td width=716>location</td><td width=510>Y</td><td width=3753>指明资源加载器加载资源要使用的文件的位置。</td></table>###9、JMS
+<table border><tr><td width=716>属性名</td><td width=510>需要?</td><td width=3753>描述</td><tr><td width=716>loader</td><td width=510>Y</td><td width=3753>前面 resource-loader 标签定义的资源加载器。</td><tr><td width=716>location</td><td width=510>Y</td><td width=3753>指明资源加载器加载资源要使用的文件的位置。</td></table>
+###  JMS
 
 jms-service  标签为JMS定义服务的位置。 
 
-<table border><tr><td width=990>属性名</td><td width=497>需要?</td><td width=7093>描述</td><tr><td width=990>name</td><td width=497>Y</td><td width=7093>JMS服务的名字，在服务定义中作为 location 的值。</td><tr><td width=990>send-mode</td><td width=497>Y</td><td width=7093>向定义的服务发送的模式有：none, all, first-available, random, round-robin, 或 least-load。</td></table>jms-service  可以包含一个或多个  server  标签，  server  标签有如下属性：
+<table border><tr><td width=990>属性名</td><td width=497>需要?</td><td width=7093>描述</td><tr><td width=990>name</td><td width=497>Y</td><td width=7093>JMS服务的名字，在服务定义中作为 location 的值。</td><tr><td width=990>send-mode</td><td width=497>Y</td><td width=7093>向定义的服务发送的模式有：none, all, first-available, random, round-robin, 或 least-load。</td></table>
 
-<table border><tr><td width=1486>属性名</td><td width=510>需要?</td><td width=3953>描述</td><tr><td width=1486>jndi-server-name</td><td width=510>Y</td><td width=3953>在 jndiservers.xml 文件中定义的 JNDI 服务名字。</td><tr><td width=1486>jndi-name</td><td width=510>Y</td><td width=3953>在 JNDI 中为 JMS 工厂定义的名字。</td><tr><td width=1486>topic-queue</td><td width=510>Y</td><td width=3953>主题或队列( topic or queue)的名字。</td><tr><td width=1486>type</td><td width=510>Y</td><td width=3953>JMS 类型可能为主题或队列( topic or queue)。</td><tr><td width=1486>username</td><td width=510>Y</td><td width=3953>连接主题/队列(topic/queue)的用户名。</td><tr><td width=1486>password</td><td width=510>Y</td><td width=3953>连接主题/队列(topic/queue)的密码。</td><tr><td width=1486>listen</td><td width=510>Y</td><td width=3953>设置是否对主题/队列(topic/queue)起用监听。</td></table>在  jndiservers.xml  文件中定义的  jndi-server  应该指出JMS  客户端  APIs  的位置。根据定义的  JMS  类型来决定使用  TopicConnectionFactory  或  QueueConnectionFactory  。JNDI  名字应该指出在  JNDI  中包含连接工厂实例的对象名字。
+jms-service  可以包含一个或多个  server  标签，  server  标签有如下属性：
+
+<table border><tr><td width=1486>属性名</td><td width=510>需要?</td><td width=3953>描述</td><tr><td width=1486>jndi-server-name</td><td width=510>Y</td><td width=3953>在 jndiservers.xml 文件中定义的 JNDI 服务名字。</td><tr><td width=1486>jndi-name</td><td width=510>Y</td><td width=3953>在 JNDI 中为 JMS 工厂定义的名字。</td><tr><td width=1486>topic-queue</td><td width=510>Y</td><td width=3953>主题或队列( topic or queue)的名字。</td><tr><td width=1486>type</td><td width=510>Y</td><td width=3953>JMS 类型可能为主题或队列( topic or queue)。</td><tr><td width=1486>username</td><td width=510>Y</td><td width=3953>连接主题/队列(topic/queue)的用户名。</td><tr><td width=1486>password</td><td width=510>Y</td><td width=3953>连接主题/队列(topic/queue)的密码。</td><tr><td width=1486>listen</td><td width=510>Y</td><td width=3953>设置是否对主题/队列(topic/queue)起用监听。</td></table>
+在  jndiservers.xml  文件中定义的  jndi-server  应该指出JMS  客户端  APIs  的位置。根据定义的  JMS  类型来决定使用  TopicConnectionFactory  或  QueueConnectionFactory  。JNDI  名字应该指出在  JNDI  中包含连接工厂实例的对象名字。
