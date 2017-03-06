@@ -2,6 +2,16 @@
 
 * [简介](README.md)
 * [业务篇](business/summary.md)
+  * [财务管理](accounting/summary.md)
+  * [内容管理](content/summary.md)
+  * [人事管理](humaners/summary.md)
+  * [生产管理](manufacturing/summary.md)
+  * [市场管理](marketing/summary.md)
+  * [订单管理](order/summary.md)
+  * [会员管理](party/summary.md)
+  * [商品管理](product/summary.md)
+  * [安全扩展管理](securityext/summary.md)
+  * [工单管理](workeffort/summary.md)
 * [架构篇](framework/summary.md)
   * [实体引擎](framework/entityengine/summary.md)
   * [消息引擎](framework/jmsengine/summary.md)
@@ -9,4 +19,3 @@
   * [服务引擎](framework/serviceengine/summary.md)
   * [工作流引擎](framework/workflow/summary.md)
   * [WEB工具](framework/webtool/summary.md)
-
