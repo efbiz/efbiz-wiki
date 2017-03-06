@@ -17,5 +17,7 @@
   * [消息引擎](framework/jmsengine/summary.md)
   * [安全引擎](framework/securityengine/summary.md)
   * [服务引擎](framework/serviceengine/summary.md)
+    * [原理分析](framework/serviceengine/analysis.md)
   * [工作流引擎](framework/workflow/summary.md)
   * [WEB工具](framework/webtool/summary.md)
+
