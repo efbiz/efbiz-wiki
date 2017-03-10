@@ -6,16 +6,16 @@ ofbiz-component.xml：所有的服务定义文件在每个组件的ofbi-componen
 
 例:framework/common/ofbiz-component.xml
 
-<code>
- &lt;entity-resource  type="model"  reader-name="main"  loader="main"  location="entitydef/entitymodel.xml"/&gt; 
- &lt;entity-resource  type="model"  reader-name="main"  loader="main"  location="entitydef/entitymodel_olap.xml"/&gt;   
-&lt;entity-resource  type="group"  reader-name="main"  loader="main"  location="entitydef/entitygroup_olap.xml"/&gt;   
- &lt;entity-resource  type="data"  reader-name="seed"  loader="main"   location="data/CommonSecurityData.xml"/&gt;   
- &lt;entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CommonSystemPropertyData.xml"/&gt;   
- &lt;entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CommonTypeData.xml"/&gt;   
- &lt;entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CountryCodeData.xml"/&gt;   
- &lt;entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CurrencyData.xml"/&gt;   
-</code>
+
+     <entity-resource  type="model"  reader-name="main"  loader="main"  location="entitydef/entitymodel.xml"/> 
+     <entity-resource  type="model"  reader-name="main"  loader="main"  location="entitydef/entitymodel_olap.xml"/>   
+     <entity-resource  type="group"  reader-name="main"  loader="main"  location="entitydef/entitygroup_olap.xml"/>   
+     <entity-resource  type="data"  reader-name="seed"  loader="main"   location="data/CommonSecurityData.xml"/>   
+     <entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CommonSystemPropertyData.xml"/>   
+     <entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CommonTypeData.xml"/>   
+     <entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CountryCodeData.xml"/>   
+     <entity-resource  type="data"  reader-name="seed"  loader="main"  location="data/CurrencyData.xml"/>   
+
 
 服务参数
 
@@ -23,27 +23,26 @@ ofbiz-component.xml：所有的服务定义文件在每个组件的ofbi-componen
 类似于java方法中的入参一样，一个ofibiz服务同样需要声明入参，声明方式为在attribute中添加属性mode="IN"
 
 例：
-<code>
-&lt;attribute  name="partyId"  type="String"  mode="IN"  optional="true"/&gt;   
-</code>
+
+    <attribute  name="partyId"  type="String"  mode="IN"  optional="true"/>   
+
 
 **OUT：输出参数**
 
 类似于java方法中会有返回值一样，一个ofbiz服务也需要声明输出参数，声明方式为在attribute中添加属性mode="OUT"
 
 例：
-<code>
-&lt;attribute  name="noteId"  type="String"  mode="OUT"/&gt;   
-</code>
 
-**INOUT：输入输出参数**
+     <attribute  name="noteId"  type="String"  mode="OUT"/>   
+
+ **INOUT：输入输出参数**
 
 为了方便起见，可以将一个参数既作为输入参数，又作为输出参数，声明方式为在attribute中添加属性mode="INOUT"
 
 例：
-<code>
-&lt;attribute  name="nodeId"  type="String"  mode="INOUT"/&gt;   
-</code>
+
+<attribute  name="nodeId"  type="String"  mode="INOUT"/>   
+
 
 **隐含参数 **
 
@@ -58,11 +57,9 @@ ofbiz-component.xml：所有的服务定义文件在每个组件的ofbi-componen
 
 例：
 
-<code>
-&lt;attribute  name="partyId"  type="String"  mode="IN"  optional="true"/&gt;   
-&lt;attribute  name="partyId"  type="String"  mode="IN"  optional="false"/&gt;   
-</code>
 
+    <attribute  name="partyId"  type="String"  mode="IN"  optional="true"/>   
+    <attribute  name="partyId"  type="String"  mode="IN"  optional="false"/>   
 
 ---
 
@@ -72,63 +69,63 @@ interface服务引擎实现了在定义服务时可以共享同样的参数。in
 
 例：applications/order/servicedef/services.xml
 
-<code>
- &lt;service  name="massOrderChangeInterface"  engine="interface"  location=""  invoke=""&gt;   
- &lt;description&gt;Interface  for  Mass  Order  Change  Services&lt;/description&gt;   
- &lt;attribute  name="orderIdList"  type="List"  mode="IN"  optional="false"/&gt;   
-&lt;/service&gt;   
-</code>
+
+    <service  name="massOrderChangeInterface"  engine="interface"  location=""  invoke="">   
+     <description>Interface  for  Mass  Order  Change  Services</description>   
+     <attribute  name="orderIdList"  type="List"  mode="IN"  optional="false"/>   
+    </service>   
+
 
 继承上述的接口来实现新的服务
 
 例：applications/order/servicedef/services.xml
 
-<code>
-&lt;service  name="massPickOrders"  engine="java"  transaction-timeout="300"   
- location="org.ofbiz.order.order.OrderServices"  invoke="massPickOrders"  auth="true"&gt;   
- &lt;implements  service="massOrderChangeInterface"/&gt;   
- &lt;/service&gt;   
- &lt;service  name="massChangeOrderApproved"  engine="java"  transaction-timeout="300"   
- location="org.ofbiz.order.order.OrderServices"  invoke="massChangeApproved"  auth="true"&gt;   
- &lt;implements  service="massOrderChangeInterface"/&gt;   
- &lt;/service&gt;   
- &lt;service  name="massProcessOrders"  engine="java"  transaction-timeout="300"   
- location="org.ofbiz.order.order.OrderServices"  invoke="massProcessOrders"  auth="true"&gt;   
- &lt;implements  service="massOrderChangeInterface"/&gt;   
- &lt;/service&gt;   
-</code>
+
+     <service  name="massPickOrders"  engine="java"  transaction-timeout="300"   
+     location="org.ofbiz.order.order.OrderServices"  invoke="massPickOrders"  auth="true">   
+     <implements  service="massOrderChangeInterface"/>   
+     </service>   
+     <service  name="massChangeOrderApproved"  engine="java"  transaction-timeout="300"   
+     location="org.ofbiz.order.order.OrderServices"  invoke="massChangeApproved"  auth="true">   
+     <implements  service="massOrderChangeInterface"/>   
+     </service>   
+     <service  name="massProcessOrders"  engine="java"  transaction-timeout="300"   
+     location="org.ofbiz.order.order.OrderServices"  invoke="massProcessOrders"  auth="true">   
+     <implements  service="massOrderChangeInterface"/>   
+     </service>   
+
 
 然后我们分别查看java类org.ofbiz.order.order.OrderServices中的方法massPickOrders、massChangeApproved、massProcessOrders
 
 代码片中都存在如下代码，可以获取参数接口定义的变量orderIdList
 
-<code>
-   List&lt;String&gt;  orderIds  =  UtilGenerics.checkList(context.get("orderIdList"));   
-</code>
+
+    List<String>  orderIds  =  UtilGenerics.checkList(context.get("orderIdList"));   
+
 
 
 覆盖接口，覆盖接口中的属性或新增属性
 
 例：applications/order/servicedef/services.xml
 
-<code>
-&lt;service  name="massPrintOrders"  engine="java"  transaction-timeout="300"   
-location="org.ofbiz.order.order.OrderServices"  invoke="massPrintOrders"  auth="true"&gt;   
-&lt;implements  service="massOrderChangeInterface"/&gt;   
- &lt;attribute  name="screenLocation"  type="String"  mode="IN"  optional="false"/&gt;   
-&lt;attribute  name="printerName"  type="String"  mode="IN"  optional="true"/&gt;   
-&lt;/service&gt; 
-</code>
+
+    <service  name="massPrintOrders"  engine="java"  transaction-timeout="300"   
+        location="org.ofbiz.order.order.OrderServices"  invoke="massPrintOrders"  auth="true">   
+    <implements  service="massOrderChangeInterface"/>   
+     <attribute  name="screenLocation"  type="String"  mode="IN"  optional="false"/>   
+    <attribute  name="printerName"  type="String"  mode="IN"  optional="true"/>   
+    </service> 
+
  
 
  查看代码java类org.ofbiz.order.order.OrderServices中的方法massPrintOrders
 
-<code>
-String  screenLocation  =  (String)  context.get("screenLocation");
-String  printerName  =  (String)  context.get("printerName");
-//  make  the  list  per  facility
- List&lt;String&gt;  orderIds  =  UtilGenerics.checkList(context.get("orderIdList"));
-</code>
+
+    String  screenLocation  =  (String)  context.get("screenLocation");
+    String  printerName  =  (String)  context.get("printerName");
+    //  make  the  list  per  facility
+     List<String>  orderIds  =  UtilGenerics.checkList(context.get("orderIdList"));
+
 
 ---
 
@@ -143,14 +140,13 @@ String  printerName  =  (String)  context.get("printerName");
 
 服务定义：applications/party/servicedef/services_view.xml
 
-<code>
- &lt;service  name="getPerson"  engine="java"
- location="org.ofbiz.party.party.PartyServices"  invoke="getPerson"&gt;
-&lt;description&gt;Gets  a  person  entity  from  the  cache/database&lt;/description&gt;
-&lt;attribute  name="partyId"  type="String"  mode="IN"/&gt;
- &lt;attribute  name="lookupPerson"  type="org.ofbiz.entity.GenericValue"  mode="OUT"/&gt;
-&lt;/service&gt;
-</code>
+    <service  name="getPerson"  engine="java"
+     location="org.ofbiz.party.party.PartyServices"  invoke="getPerson">
+    <description>Gets  a  person  entity  from  the  cache/database</description>
+    <attribute  name="partyId"  type="String"  mode="IN"/>
+     <attribute  name="lookupPerson"  type="org.ofbiz.entity.GenericValue"  mode="OUT"/>
+    </service>
+
 
 
 ** engine：  java **
@@ -169,30 +165,30 @@ invoke：静态的方法名称
 
 4、从java代码中如下访问便利的对象
 
-<code>
-GenericValue  userLogin  =  (GenericValue)context.get("userLogin");
-Locale  locale  =  (Locale)context.get("locale");
-Delegator  delegator  =  dctx.getDelegator();
-</code>
+
+    GenericValue  userLogin  =  (GenericValue)context.get("userLogin");
+    Locale  locale  =  (Locale)context.get("locale");
+    Delegator  delegator  =  dctx.getDelegator();
+
 
 
 ** 安全和访问控制**
 
 例：详细参考/applications/order/src/org/ofbiz/order/order/OrderLookupServices.java
 
-<code>
-public  static  Map&lt;String,  Object&gt;  findOrders(DispatchContext  dctx,  Map&lt;String,  ? extends  Object&gt;  context)  {
-Security  security  =  dctx.getSecurity();
- //  check  security  flag  for  purchase  orders
-boolean  canViewPo  =  security.hasEntityPermission("ORDERMGR",  "_PURCHASE_VIEW",  userLogin);
- if  (!canViewPo)  {
-   conditions.add(EntityCondition.makeCondition("orderTypeId",  EntityOperator.NOT_EQUAL,  "PURCHASE_ORDER"));
- }
-}
-</code>
+
+    public  static  Map<String,  Object>  findOrders(DispatchContext  dctx,
+        Map<String,  ? extends  Object>  context)  {
+    Security  security  =  dctx.getSecurity();
+     //  check  security  flag  for  purchase  orders
+    boolean  canViewPo  =  security.hasEntityPermission("ORDERMGR",  "_PURCHASE_VIEW",  userLogin);
+     if  (!canViewPo)  {
+       conditions.add(EntityCondition.makeCondition("orderTypeId",  EntityOperator.NOT_EQUAL,  "PURCHASE_ORDER"));
+     }
+    }
 
 
-** 服务返回 **
+** 服务返回  **
 
 服务必须返回一个map，这个map至少包含一个responseMessage
 
@@ -202,27 +198,24 @@ ModelService.RESPOND_ERROR
 
 ModelService.RESPOND_FAIL
 
-simple:使用minilang开发的服务详细使用方法参考后续的《minilang开发  学习笔记  》系列
+simple:使用minilang开发的服务详细使用方法参考后续的《minilang开发  学习笔记  》系列  
+脚本：applications/party/servicedef/services.xml  
 
-脚本：applications/party/servicedef/services.xml
 
-<code>
- &lt;!--  Party  Relationship  services  --&gt;<br/>
-&lt;service  name="createPartyRelationship"  default-entity-name="PartyRelationship"  engine="simple"
-location="component://party/script/org/ofbiz/party/party/PartyServices.xml"  invoke="createPartyRelationship"  auth="true"&gt;<br/>
- &lt;description&gt;
- Create  a  Relationship  between  two  Parties;
- if  partyIdFrom  is  not  specified  the  partyId  of  the  current  userLogin  will  be  used;
- if  roleTypeIds  are  not  specified  they  will  default  to  "_NA_".
- If  a  partyIdFrom  is  passed  in,  it  will  be  used  if  the  userLogin  has  PARTYMGR_REL_CREATE  permission.
- &lt;/description&gt;<br/>
- &lt;permission-service  service-name="partyRelationshipPermissionCheck"  main-action="CREATE"/&gt;<br/>
- &lt;auto-attributes  include="pk"  mode="IN"  optional="true"/&gt;<br/>
- &lt;auto-attributes  include="nonpk"  mode="IN"  optional="true"/&gt;
- &lt;override  name="partyIdTo"  optional="false"/&gt;
-&lt;/service&gt;
-</code>
-
+     <!--  Party  Relationship  services  --><br/>
+    <service  name="createPartyRelationship"  default-entity-name="PartyRelationship"  engine="simple"
+    location="component://party/script/org/ofbiz/party/party/PartyServices.xml"  invoke="createPartyRelationship"  auth="true"><br/>
+     <description>
+     Create  a  Relationship  between  two  Parties;
+     if  partyIdFrom  is  not  specified  the  partyId  of  the  current  userLogin  will  be  used;
+     if  roleTypeIds  are  not  specified  they  will  default  to  "_NA_".
+     If  a  partyIdFrom  is  passed  in,  it  will  be  used  if  the  userLogin  has  PARTYMGR_REL_CREATE  permission.
+     </description><br/>
+     <permission-service  service-name="partyRelationshipPermissionCheck"  main-action="CREATE"/><br/>
+     <auto-attributes  include="pk"  mode="IN"  optional="true"/><br/>
+     <auto-attributes  include="nonpk"  mode="IN"  optional="true"/>
+     <override  name="partyIdTo"  optional="false"/>
+    </service>
 
 ** engine：  simple **
 
@@ -230,71 +223,71 @@ location：实现文件的全路径
 
 invoke：simple-method
 
-<code>
-&lt;!--  PartyRelationship  services  --&gt;<br/>
-&lt;simple-method  method-name="createPartyRelationship"  short-description="createPartyRelationship"&gt;<br/>
-&lt;if-empty  field="parameters.roleTypeIdFrom"&gt;&lt;set  field="parameters.roleTypeIdFrom"  value="_NA_"/&gt;&lt;/if-empty&gt;<br/>
-&lt;if-empty  field="parameters.roleTypeIdTo"&gt;&lt;set  field="parameters.roleTypeIdTo"  value="_NA_"/&gt;&lt;/if-empty&gt;<br/>
-&lt;if-empty  field="parameters.partyIdFrom"&gt;&lt;set  field="parameters.partyIdFrom"  from-field="userLogin.partyId"/&gt;&lt;/if-empty&gt;<br/>
- &lt;if-empty  field="parameters.fromDate"&gt;&lt;now-timestamp  field="parameters.fromDate"/&gt;&lt;/if-empty&gt;<br/>
- &lt;!--  check  if  not  already  exist  --&gt;<br/>
-&lt;entity-and  entity-name="PartyRelationship"  list="partyRels"  filter-by-date="true"&gt;
- &lt;field-map  field-name="partyIdFrom"  from-field="parameters.partyIdFrom"/&gt;
-&lt;field-map  field-name="roleTypeIdFrom"  from-field="parameters.roleTypeIdFrom"/&gt;
- &lt;field-map  field-name="roleTypeIdTo"  from-field="parameters.roleTypeIdTo"/&gt;
-&lt;/entity-and&gt;<br/>
- &lt;if-empty  field="partyRels"&gt;
- &lt;make-value  value-field="newEntity"  entity-name="PartyRelationship"/&gt;
-&lt;set-pk-fields  map="parameters"  value-field="newEntity"/&gt;
- &lt;set-nonpk-fields  map="parameters"  value-field="newEntity"/&gt;
-&lt;create-value  value-field="newEntity"/&gt;
- &lt;/if-empty&gt;
-&lt;/simple-method&gt;
-</code>
+
+    <!--  PartyRelationship  services  --><br/>
+    <simple-method  method-name="createPartyRelationship"  short-description="createPartyRelationship"><br/>
+    <if-empty  field="parameters.roleTypeIdFrom"><set  field="parameters.roleTypeIdFrom"  value="_NA_"/></if-empty><br/>
+    <if-empty  field="parameters.roleTypeIdTo"><set  field="parameters.roleTypeIdTo"  value="_NA_"/></if-empty><br/>
+    <if-empty  field="parameters.partyIdFrom"><set  field="parameters.partyIdFrom"  from-field="userLogin.partyId"/></if-empty><br/>
+    <if-empty  field="parameters.fromDate"><now-timestamp  field="parameters.fromDate"/></if-empty><br/>
+     <!--  check  if  not  already  exist  --><br/>
+    <entity-and  entity-name="PartyRelationship"  list="partyRels"  filter-by-date="true">
+     <field-map  field-name="partyIdFrom"  from-field="parameters.partyIdFrom"/>
+    <field-map  field-name="roleTypeIdFrom"  from-field="parameters.roleTypeIdFrom"/>
+     <field-map  field-name="roleTypeIdTo"  from-field="parameters.roleTypeIdTo"/>
+    </entity-and><br/>
+    <if-empty  field="partyRels">
+     <make-value  value-field="newEntity"  entity-name="PartyRelationship"/>
+    <set-pk-fields  map="parameters"  value-field="newEntity"/>
+     <set-nonpk-fields  map="parameters"  value-field="newEntity"/>
+    <create-value  value-field="newEntity"/>
+     </if-empty>
+    </simple-method>
+
  
 ** entity-auto服务 **
 
 例：specialpurpose/example/servicedef/services.xml
 
-<code>
- &lt;!--  Example  &amp;  Related  Services  --&gt;<br/>
- &lt;service  name="createExample"  default-entity-name="Example"  engine="entity-auto"  invoke="create"  auth="true"&gt;
- &lt;description&gt;Create  a  Example&lt;/description&gt;
-&lt;permission-service  service-name="exampleGenericPermission"  main-action="CREATE"/&gt;
-&lt;auto-attributes  include="pk"  mode="OUT"  optional="false"/&gt;
-&lt;auto-attributes  include="nonpk"  mode="IN"  optional="true"/&gt;
- &lt;override  name="exampleTypeId"  optional="false"/&gt;
- &lt;override  name="statusId"  optional="false"/&gt;
- &lt;override  name="exampleName"  optional="false"/&gt;
-&lt;/service&gt;
-</code>
+
+     <!--  Example  &amp;  Related  Services  --><br/>
+    <service  name="createExample"  default-entity-name="Example"  engine="entity-auto"  invoke="create"  auth="true">
+     <description>Create  a  Example</description>
+    <permission-service  service-name="exampleGenericPermission"  main-action="CREATE"/>
+    <auto-attributes  include="pk"  mode="OUT"  optional="false"/>
+    <auto-attributes  include="nonpk"  mode="IN"  optional="true"/>
+     <override  name="exampleTypeId"  optional="false"/>
+     <override  name="statusId"  optional="false"/>
+     <override  name="exampleName"  optional="false"/>
+    </service>
+
 
 
 ### RMI服务
 
 例：applications/accounting/servicedef/services_rita.xml
 
-<code>
- &lt;!--  RiTA  (Remote)  Implementations  --&gt;<br/>
- &lt;service  name="ritaCCAuthRemote"  engine="rmi"
- location="rita-rmi"  invoke="ritaCCAuth"&gt;
-   &lt;description&gt;RiTA  Credit  Card  Pre-Authorization/Sale&lt;/description&gt;
-   &lt;implements  service="ccAuthInterface"/&gt;
- &lt;/service&gt;
+
+    <!--  RiTA  (Remote)  Implementations  --><br/>
+     <service  name="ritaCCAuthRemote"  engine="rmi"
+     location="rita-rmi"  invoke="ritaCCAuth">
+       <description>RiTA  Credit  Card  Pre-Authorization/Sale</description>
+       <implements  service="ccAuthInterface"/>
+     </service>
 
 
 ** engine：rmi **
 
 location：rita-rmi这个是是在serviceengine.xml中配置的
 
-&lt;service-location  name="rita-rmi"  location="rmi://localhost:1099/RMIDispatcher"/&gt;
-invoke：ritaCCAuth  服务名，该服务如下，也在applications/accounting/servicedef/services_rita.xml中
-&lt;!--  RiTA  (Local)  Implementations  --&gt;
- &lt;service  name="ritaCCAuth"  engine="java"  export="true"
- location="org.ofbiz.accounting.thirdparty.gosoftware.RitaServices"  invoke="ccAuth"&gt;
-   &lt;description&gt;RiTA  Credit  Card  Pre-Authorization/Sale&lt;/description&gt;
-   &lt;implements  service="ccAuthInterface"/&gt;
- &lt;/service&gt;
+    <service-location  name="rita-rmi"  location="rmi://localhost:1099/RMIDispatcher"/>
+    invoke：ritaCCAuth  服务名，该服务如下，也在applications/accounting/servicedef/services_rita.xml中
+    <!--  RiTA  (Local)  Implementations  -->
+     <service  name="ritaCCAuth"  engine="java"  export="true"
+     location="org.ofbiz.accounting.thirdparty.gosoftware.RitaServices"  invoke="ccAuth">
+       <description>RiTA  Credit  Card  Pre-Authorization/Sale</description>
+       <implements  service="ccAuthInterface"/>
+     </service>
 
 
 设置为可被远程调用  export=“true”
@@ -332,17 +325,17 @@ service：类似于ECA中的action元素，不同之处在于resutl-to-context�
 例：applications/workeffort/servicedef/service_groups.xml
 
 
-&lt;service-group  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/service-group.xsd"&gt;
- &lt;group  name="updateWorkEffortAndAssoc"  send-mode="all"    &gt;
-  &lt;invoke  name="updateWorkEffort"  mode="sync"/&gt;
-   &lt;invoke  name="updateWorkEffortAssoc"  mode="sync"/&gt;
- &lt;/group&gt;
- &lt;group  name="createWorkEffortRequestItemAndRequestItem"  send-mode="all"    &gt;
-   &lt;invoke  name="checkCustRequestItemExists"  mode="sync"    result-to-context="true"/&gt;
-   &lt;invoke  name="createWorkEffortRequestItem"  mode="sync"/&gt;
- &lt;/group&gt;
-&lt;/service-group&gt;
+    <service-group  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/service-group.xsd">
+     <group  name="updateWorkEffortAndAssoc"  send-mode="all"    >
+      <invoke  name="updateWorkEffort"  mode="sync"/>
+       <invoke  name="updateWorkEffortAssoc"  mode="sync"/>
+     </group>
+     <group  name="createWorkEffortRequestItemAndRequestItem"  send-mode="all"    >
+       <invoke  name="checkCustRequestItemExists"  mode="sync"    result-to-context="true"/>
+       <invoke  name="createWorkEffortRequestItem"  mode="sync"/>
+     </group>
+    </service-group>
 
 
  
@@ -355,15 +348,15 @@ service：类似于ECA中的action元素，不同之处在于resutl-to-context�
 
 例：applications/content/src/org/ofbiz/content/search/SearchEvents.java
 
-<code>
-public  static  String  indexTree(HttpServletRequest  request,  HttpServletResponse  response)  {
-        Map&lt;String,  Object&gt;  result;
-        Map&lt;String,  Object&gt;  serviceInMap  =  FastMap.newInstance();
+
+     public  static  String  indexTree(HttpServletRequest  request,  HttpServletResponse  response)  {
+        Map<String,  Object>  result;
+        Map<String,  Object>  serviceInMap  =  FastMap.newInstance();
         HttpSession  session  =  request.getSession();
         GenericValue  userLogin  =  (GenericValue)session.getAttribute("userLogin");
         serviceInMap.put("userLogin",  userLogin);
         LocalDispatcher  dispatcher  =  (LocalDispatcher)  request.getAttribute("dispatcher");
-        Map&lt;String,  Object&gt;  paramMap  =  UtilHttp.getParameterMap(request);
+        Map<String,  Object>  paramMap  =  UtilHttp.getParameterMap(request);
         String  siteId  =  (String)paramMap.get("contentId");
       serviceInMap.put("contentId",  siteId);
       try  {
@@ -378,7 +371,7 @@ public  static  String  indexTree(HttpServletRequest  request,  HttpServlet
       if  (Debug.infoOn())  Debug.logInfo("errMsg:"  +  errMsg,  module);
       if  (Debug.infoOn())  Debug.logInfo("result:"  +  result,  module);
       if  (UtilValidate.isEmpty(errMsg))  {
-       List&lt;String&gt;  badIndexList  =  UtilGenerics.checkList(result.get("badIndexList"));
+       List<String>  badIndexList  =  UtilGenerics.checkList(result.get("badIndexList"));
        if  (Debug.infoOn())  Debug.logInfo("badIndexList:"  +  badIndexList,  module);
        String  badIndexMsg  =  StringUtil.join(badIndexList,  "\n")  +  badIndexList.size()  +  "  entities  not  indexed";
        Integer  goodIndexCount  =  (Integer)result.get("goodIndexCount");
@@ -391,12 +384,12 @@ public  static  String  indexTree(HttpServletRequest  request,  HttpServlet
        return  "error";
           }
        }
-</code>
+
 
  
 调用服务
 
-<code>
+
      try  {
        result  =  dispatcher.runSync("indexTree",  serviceInMap);
           }  catch  (GenericServiceException  e)  {
@@ -405,21 +398,21 @@ public  static  String  indexTree(HttpServletRequest  request,  HttpServlet
        request.setAttribute("_ERROR_MESSAGE_",  errorMsg  +  e.toString());
        return  "error";
       }
-</code>
+
 
  
 
 如上调用了indxTree服务，该服务在applications/content/servicedef/services.xml中被定义
 
-<code>
- &lt;service  name="indexTree"  auth="true"  engine="java"  validate="true"  transaction-timeout="7200"
-  location="org.ofbiz.content.search.SearchServices"  invoke="indexTree"&gt;
-   &lt;description&gt;Index  content  under  publish  point&lt;/description&gt;
-   &lt;attribute  mode="IN"  name="contentId"  optional="false"  type="String"/&gt;
-   &lt;attribute  mode="OUT"  name="badIndexList"  optional="true"  type="List"/&gt;
-   &lt;attribute  mode="OUT"  name="goodIndexCount"  optional="true"  type="Integer"/&gt;
- &lt;/service&gt;
-</code>
+
+     <service  name="indexTree"  auth="true"  engine="java"  validate="true"  transaction-timeout="7200"
+      location="org.ofbiz.content.search.SearchServices"  invoke="indexTree">
+       <description>Index  content  under  publish  point</description>
+       <attribute  mode="IN"  name="contentId"  optional="false"  type="String"/>
+       <attribute  mode="OUT"  name="badIndexList"  optional="true"  type="List"/>
+       <attribute  mode="OUT"  name="goodIndexCount"  optional="true"  type="Integer"/>
+     </service>
+
  
 
  
@@ -428,119 +421,118 @@ public  static  String  indexTree(HttpServletRequest  request,  HttpServlet
 
 例：applications/accounting/script/org/ofbiz/accounting/payment/PaymentServices.xml
 
-<code>
- &lt;simple-method  method-name="createPaymentAndApplication"  short-description="Create  a  payment  and  a  payment  application  for  the  full  amount"&gt;
-   &lt;set-service-fields  service-name="createPayment"  map="parameters"  to-map="createPaymentInMap"/&gt;
-   &lt;call-service  service-name="createPayment"  in-map-name="createPaymentInMap"&gt;
- &lt;result-to-field  field="paymentId"  result-name="paymentId"/&gt;
-  &lt;/call-service&gt;
-   &lt;check-errors/&gt;
-   &lt;set-service-fields  service-name="createPaymentApplication"  map="parameters"  to-map="createPaymentAppInMap"/&gt;
-   &lt;set  field="createPaymentAppInMap.paymentId"  from-field="paymentId"/&gt;
-   &lt;set  field="createPaymentAppInMap.amountApplied"  from-field="parameters.amount"/&gt;
-   &lt;call-service  service-name="createPaymentApplication"  in-map-name="createPaymentAppInMap"&gt;
- &lt;result-to-field  field="paymentApplicationId"  result-name="paymentApplicationId"/&gt;
-   &lt;/call-service&gt;
-   &lt;check-errors/&gt;
-   &lt;field-to-result  field="paymentId"  result-name="paymentId"/&gt;
-   &lt;field-to-result  field="paymentApplicationId"  result-name="paymentApplicationId"/&gt;
- &lt;/simple-method&gt;
-</code>
+     <simple-method  method-name="createPaymentAndApplication"  short-description="Create  a  payment  and  a  payment  application  for  the  full  amount">
+     <set-service-fields  service-name="createPayment"  map="parameters"  to-map="createPaymentInMap"/>
+     <call-service  service-name="createPayment"  in-map-name="createPaymentInMap">
+   <result-to-field  field="paymentId"  result-name="paymentId"/>
+    </call-service>
+     <check-errors/>
+     <set-service-fields  service-name="createPaymentApplication"  map="parameters"  to-map="createPaymentAppInMap"/>
+     <set  field="createPaymentAppInMap.paymentId"  from-field="paymentId"/>
+     <set  field="createPaymentAppInMap.amountApplied"  from-field="parameters.amount"/>
+     <call-service  service-name="createPaymentApplication"  in-map-name="createPaymentAppInMap">
+   <result-to-field  field="paymentApplicationId"  result-name="paymentApplicationId"/>
+     </call-service>
+     <check-errors/>
+     <field-to-result  field="paymentId"  result-name="paymentId"/>
+     <field-to-result  field="paymentApplicationId"  result-name="paymentApplicationId"/>
+    </simple-method>
+
 
  
 
 调用服务
 
-<code>
-   &lt;call-service  service-name="createPayment"  in-map-name="createPaymentInMap"&gt;
- &lt;result-to-field  field="paymentId"  result-name="paymentId"/&gt;
-   &lt;/call-service&gt;
-</code>
+
+    <call-service  service-name="createPayment"  in-map-name="createPaymentInMap">
+    <result-to-field  field="paymentId"  result-name="paymentId"/>
+    </call-service>
+
  
 
 该服务createPayment定义于applications/accounting/script/org/ofbiz/accounting/payment/PaymentServices.xml
 
-<code>
- &lt;simple-method  method-name="createPayment"  short-description="Create  a  Payment"&gt;
-   &lt;if&gt;
- &lt;condition&gt;
-  &lt;and&gt;
-    &lt;not&gt;&lt;if-has-permission  permission="PAY_INFO"  action="_CREATE"/&gt;&lt;/not&gt;
-    &lt;not&gt;&lt;if-compare-field  field="userLogin.partyId"  to-field="parameters.partyIdFrom"  operator="equals"/&gt;&lt;/not&gt;
-    &lt;not&gt;&lt;if-compare-field  field="userLogin.partyId"  to-field="parameters.partyIdTo"  operator="equals"/&gt;&lt;/not&gt;
-  &lt;/and&gt;
- &lt;/condition&gt;
- &lt;then&gt;
-  &lt;add-error&gt;
-    &lt;fail-property  resource="AccountingUiLabels"  property="AccountingCreatePaymentPermissionError"/&gt;
-  &lt;/add-error&gt;
- &lt;/then&gt;
-   &lt;/if&gt;
-   &lt;check-errors/&gt;
-   &lt;make-value  entity-name="Payment"  value-field="payment"/&gt;
-   &lt;if-empty  field="parameters.paymentId"&gt;
- &lt;sequenced-id  sequence-name="Payment"  field="payment.paymentId"/&gt;
-&lt;else&gt;
-  &lt;set  field="payment.paymentId"  from-field="parameters.paymentId"/&gt;
- &lt;/else&gt;
-   &lt;/if-empty&gt;
-   &lt;field-to-result  field="payment.paymentId"  result-name="paymentId"/&gt;
-   &lt;if-not-empty  field="parameters.paymentMethodId"&gt;
- &lt;entity-one  entity-name="PaymentMethod"  value-field="paymentMethod"&gt;
-  &lt;field-map  field-name="paymentMethodId"  from-field="parameters.paymentMethodId"/&gt;
- &lt;/entity-one&gt;
- &lt;if-compare-field  field="parameters.paymentMethodTypeId"  operator="not-equals"  to-field="paymentMethod.paymentMethodTypeId"&gt;
-  &lt;log  level="info"  message="Replacing  passed  payment  method  type  [${parameters.paymentMethodTypeId}]  with  payment  method  type  [${paymentMethod.paymentMethodTypeId}]  for  payment  method  [${parameters.paymentMethodId}]"/&gt;
-  &lt;set  field="parameters.paymentMethodTypeId"  from-field="paymentMethod.paymentMethodTypeId"/&gt;
- &lt;/if-compare-field&gt;
-   &lt;/if-not-empty&gt;
-   &lt;if-not-empty  field="parameters.paymentPreferenceId"&gt;
- &lt;entity-one  value-field="orderPaymentPreference"  entity-name="OrderPaymentPreference"&gt;
-  &lt;field-map  field-name="orderPaymentPreferenceId"  from-field="parameters.paymentPreferenceId"/&gt;
- &lt;/entity-one&gt;
- &lt;if-empty  field="parameters.paymentMethodId"&gt;
- &lt;set  field="parameters.paymentMethodId"  from-field="orderPaymentPreference.paymentMethodId"/&gt;
- &lt;/if-empty&gt;
- &lt;if-empty  field="parameters.paymentMethodTypeId"&gt;
-  &lt;set  field="parameters.paymentMethodTypeId"  from-field="orderPaymentPreference.paymentMethodTypeId"/&gt;
- &lt;/if-empty&gt;
-   &lt;/if-not-empty&gt;
-   &lt;if-empty  field="parameters.paymentMethodTypeId"&gt;
- &lt;add-error&gt;
-  &lt;fail-property  resource="AccountingUiLabels"  property="AccountingPaymentMethodIdPaymentMethodTypeIdNullError"/&gt;
- &lt;/add-error&gt;
-   &lt;/if-empty&gt;
-   &lt;set-nonpk-fields  map="parameters"  value-field="payment"/&gt;
-   &lt;if-empty  field="payment.effectiveDate"&gt;
- &lt;now-timestamp  field="payment.effectiveDate"/&gt;
-   &lt;/if-empty&gt;
-   &lt;create-value  value-field="payment"/&gt;
- &lt;/simple-method&gt;
-</code>
+
+     <simple-method  method-name="createPayment"  short-description="Create  a  Payment">
+       <if>
+     <condition>
+      <and>
+        <not><if-has-permission  permission="PAY_INFO"  action="_CREATE"/></not>
+        <not><if-compare-field  field="userLogin.partyId"  to-field="parameters.partyIdFrom"  operator="equals"/></not>
+        <not><if-compare-field  field="userLogin.partyId"  to-field="parameters.partyIdTo"  operator="equals"/></not>
+      </and>
+     </condition>
+     <then>
+      <add-error>
+        <fail-property  resource="AccountingUiLabels"  property="AccountingCreatePaymentPermissionError"/>
+      </add-error>
+     </then>
+       </if>
+       <check-errors/>
+       <make-value  entity-name="Payment"  value-field="payment"/>
+       <if-empty  field="parameters.paymentId">
+     <sequenced-id  sequence-name="Payment"  field="payment.paymentId"/>
+    <else>
+      <set  field="payment.paymentId"  from-field="parameters.paymentId"/>
+     </else>
+       </if-empty>
+       <field-to-result  field="payment.paymentId"  result-name="paymentId"/>
+       <if-not-empty  field="parameters.paymentMethodId">
+     <entity-one  entity-name="PaymentMethod"  value-field="paymentMethod">
+      <field-map  field-name="paymentMethodId"  from-field="parameters.paymentMethodId"/>
+     </entity-one>
+     <if-compare-field  field="parameters.paymentMethodTypeId"  operator="not-equals"  to-field="paymentMethod.paymentMethodTypeId">
+      <log  level="info"  message="Replacing  passed  payment  method  type  [${parameters.paymentMethodTypeId}]  with  payment  method  type  [${paymentMethod.paymentMethodTypeId}]  for  payment  method  [${parameters.paymentMethodId}]"/>
+      <set  field="parameters.paymentMethodTypeId"  from-field="paymentMethod.paymentMethodTypeId"/>
+     </if-compare-field>
+       </if-not-empty>
+       <if-not-empty  field="parameters.paymentPreferenceId">
+     <entity-one  value-field="orderPaymentPreference"  entity-name="OrderPaymentPreference">
+      <field-map  field-name="orderPaymentPreferenceId"  from-field="parameters.paymentPreferenceId"/>
+     </entity-one>
+     <if-empty  field="parameters.paymentMethodId">
+     <set  field="parameters.paymentMethodId"  from-field="orderPaymentPreference.paymentMethodId"/>
+     </if-empty>
+     <if-empty  field="parameters.paymentMethodTypeId">
+      <set  field="parameters.paymentMethodTypeId"  from-field="orderPaymentPreference.paymentMethodTypeId"/>
+     </if-empty>
+       </if-not-empty>
+       <if-empty  field="parameters.paymentMethodTypeId">
+     <add-error>
+      <fail-property  resource="AccountingUiLabels"  property="AccountingPaymentMethodIdPaymentMethodTypeIdNullError"/>
+     </add-error>
+       </if-empty>
+       <set-nonpk-fields  map="parameters"  value-field="payment"/>
+       <if-empty  field="payment.effectiveDate">
+     <now-timestamp  field="payment.effectiveDate"/>
+       </if-empty>
+       <create-value  value-field="payment"/>
+     </simple-method>
+
 
  
 
 ### 异步方式调用
 
-<code>
- &lt;simple-method  method-name="sendInvoicePerEmail"  short-description="Send  an  invoice  per  Email"&gt;
-   &lt;set-service-fields  service-name="sendMailFromScreen"  map="parameters"  to-map="emailParams"/&gt;
-   &lt;set  field="emailParams.xslfoAttachScreenLocation"  value="component://accounting/widget/AccountingPrintScreens.xml#InvoicePDF"/&gt;
-   &lt;set  field="emailParams.bodyParameters.invoiceId"  from-field="parameters.invoiceId"/&gt;
-  &lt;set  field="emailParams.bodyParameters.userLogin"  from-field="parameters.userLogin"/&gt;
-   &lt;set  field="emailParams.bodyParameters.other"  from-field="parameters.other"/&gt;&lt;!--  to  to  print  in  'other  currency'  --&gt;
-   &lt;call-service-asynch  service-name="sendMailFromScreen"  in-map-name="emailParams"/&gt;
-   &lt;property-to-field  resource="AccountingUiLabels"  property="AccountingEmailScheduledToSend"  field="successMessage"/&gt;
- &lt;/simple-method&gt;
-</code>
+
+    <simple-method  method-name="sendInvoicePerEmail"  short-description="Send  an  invoice  per  Email">
+       <set-service-fields  service-name="sendMailFromScreen"  map="parameters"  to-map="emailParams"/>
+       <set  field="emailParams.xslfoAttachScreenLocation"  value="component://accounting/widget/AccountingPrintScreens.xml#InvoicePDF"/>
+       <set  field="emailParams.bodyParameters.invoiceId"  from-field="parameters.invoiceId"/>
+      <set  field="emailParams.bodyParameters.userLogin"  from-field="parameters.userLogin"/>
+       <set  field="emailParams.bodyParameters.other"  from-field="parameters.other"/><!--  to  to  print  in  'other  currency'  -->
+       <call-service-asynch  service-name="sendMailFromScreen"  in-map-name="emailParams"/>
+       <property-to-field  resource="AccountingUiLabels"  property="AccountingEmailScheduledToSend"  field="successMessage"/>
+     </simple-method>
+
 
  
 
 异步调用代码
 
-<code>
-    &lt;call-service-asynch  service-name="sendMailFromScreen"  in-map-name="emailParams"/&gt;
-</code>
+
+     <call-service-asynch  service-name="sendMailFromScreen"  in-map-name="emailParams"/>
+
  
 
  
@@ -552,24 +544,24 @@ public  static  String  indexTree(HttpServletRequest  request,  HttpServlet
 #### 服务定义时申明事务
 
 例：applications/order/servicedef/services.xml
-<code>
- &lt;service  name="sendOrderConfirmation"  engine="java"  require-new-transaction="true"  max-retry="3"
- location="org.ofbiz.order.order.OrderServices"  invoke="sendOrderConfirmNotification"&gt;
-   &lt;description&gt;Send  a  order  confirmation&lt;/description&gt;
-   &lt;implements  service="orderNotificationInterface"/&gt;
- &lt;/service&gt;
-</code>
+
+     <service  name="sendOrderConfirmation"  engine="java"  require-new-transaction="true"  max-retry="3"
+     location="org.ofbiz.order.order.OrderServices"  invoke="sendOrderConfirmNotification">
+       <description>Send  a  order  confirmation</description>
+       <implements  service="orderNotificationInterface"/>
+     </service>
+
  
 
 #### 在服务调用时指定
 
 java代码
-<code>
-dispatcher.runSync(servicename,  context,transactionTimeOut,requireNewTransaction);
-dispatcher.runAsync(servicename,  context,requester,persist,transactionTimeOut,requireNewTransaction);
-</code>
- 
 
+    dispatcher.runSync(servicename,  context,transactionTimeOut,requireNewTransaction);
+    dispatcher.runAsync(servicename,  context,requester,persist,transactionTimeOut,requireNewTransaction);
+
+ 
+ 
 
 #### 事务的管理规则
 
